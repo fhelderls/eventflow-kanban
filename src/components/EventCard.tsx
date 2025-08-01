@@ -2,23 +2,26 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Calendar, MapPin, User, Clock, Package } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-export interface Event {
-  id: string;
-  title: string;
-  client: string;
-  date: string;
-  time: string;
-  location: string;
-  status: "planejado" | "confirmado" | "em-andamento" | "concluido" | "cancelado";
-  equipmentCount: number;
-  priority: "alta" | "media" | "baixa";
-}
+import { Event } from "@/hooks/useEvents";
 
 interface EventCardProps {
   event: Event;
   onClick?: (event: Event) => void;
 }
+
+const statusColors = {
+  planejado: "bg-info text-info-foreground",
+  confirmado: "bg-primary text-primary-foreground",
+  "em-andamento": "bg-warning text-warning-foreground",
+  concluido: "bg-success text-success-foreground",
+  cancelado: "bg-destructive text-destructive-foreground",
+};
+
+const priorityIndicators = {
+  alta: "border-l-4 border-destructive",
+  media: "border-l-4 border-warning",
+  baixa: "border-l-4 border-success",
+};
 
 const statusColors = {
   planejado: "bg-info text-info-foreground",
@@ -60,15 +63,15 @@ export const EventCard = ({ event, onClick }: EventCardProps) => {
         {/* Client */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <User className="w-3 h-3" />
-          <span className="truncate">{event.client}</span>
+          <span className="truncate">{event.client_name}</span>
         </div>
 
         {/* Date & Time */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Calendar className="w-3 h-3" />
-          <span>{event.date}</span>
+          <span>{event.event_date}</span>
           <Clock className="w-3 h-3 ml-1" />
-          <span>{event.time}</span>
+          <span>{event.event_time}</span>
         </div>
 
         {/* Location */}
@@ -77,13 +80,15 @@ export const EventCard = ({ event, onClick }: EventCardProps) => {
           <span className="truncate">{event.location}</span>
         </div>
 
-        {/* Equipment Count */}
-        <div className="flex items-center gap-2 text-xs">
-          <Package className="w-3 h-3 text-primary" />
-          <span className="text-primary font-medium">
-            {event.equipmentCount} equipamentos
-          </span>
-        </div>
+        {/* Budget */}
+        {event.estimated_budget && (
+          <div className="flex items-center gap-2 text-xs">
+            <Package className="w-3 h-3 text-primary" />
+            <span className="text-primary font-medium">
+              R$ {event.estimated_budget.toLocaleString('pt-BR')}
+            </span>
+          </div>
+        )}
       </div>
     </Card>
   );

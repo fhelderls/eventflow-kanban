@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { StatsCard } from "@/components/StatsCard";
 import { KanbanColumn } from "@/components/KanbanColumn";
-import { Event } from "@/components/EventCard";
+import { useEvents, Event } from "@/hooks/useEvents";
 import { Calendar, Users, Package, TrendingUp, Plus, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-
-// Mock data - será substituído por dados reais do Supabase
 const mockEvents: Event[] = [
   {
     id: "1",
