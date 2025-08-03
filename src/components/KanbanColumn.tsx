@@ -1,4 +1,5 @@
-import { Event, EventCard } from "./EventCard";
+import { EventCard } from "./EventCard";
+import { Event } from "@/hooks/useEvents";
 import { Badge } from "@/components/ui/badge";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";

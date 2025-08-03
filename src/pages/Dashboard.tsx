@@ -9,46 +9,46 @@ const mockEvents: Event[] = [
   {
     id: "1",
     title: "Casamento Silva & Santos",
-    client: "Maria Silva",
-    date: "15/12/2024",
-    time: "19:00",
+    client_name: "Maria Silva",
+    event_date: "2024-12-15",
+    event_time: "19:00",
     location: "Salão Príncipe",
     status: "confirmado",
-    equipmentCount: 12,
-    priority: "alta"
+    priority: "alta",
+    estimated_budget: 5000
   },
   {
     id: "2", 
     title: "Formatura Medicina UFMG",
-    client: "João Oliveira",
-    date: "20/12/2024",
-    time: "20:00",
+    client_name: "João Oliveira",
+    event_date: "2024-12-20",
+    event_time: "20:00",
     location: "Centro de Convenções",
     status: "planejado",
-    equipmentCount: 25,
-    priority: "media"
+    priority: "media",
+    estimated_budget: 8000
   },
   {
     id: "3",
     title: "Aniversário 15 Anos",
-    client: "Ana Costa",
-    date: "12/12/2024", 
-    time: "18:00",
+    client_name: "Ana Costa",
+    event_date: "2024-12-12", 
+    event_time: "18:00",
     location: "Clube Náutico",
     status: "em-andamento",
-    equipmentCount: 8,
-    priority: "baixa"
+    priority: "baixa",
+    estimated_budget: 3000
   },
   {
     id: "4",
     title: "Evento Corporativo TechStart",
-    client: "Carlos Mendes",
-    date: "10/12/2024",
-    time: "14:00", 
+    client_name: "Carlos Mendes",
+    event_date: "2024-12-10",
+    event_time: "14:00", 
     location: "Hotel Intercity",
     status: "concluido",
-    equipmentCount: 18,
-    priority: "alta"
+    priority: "alta",
+    estimated_budget: 7500
   }
 ];
 
@@ -99,13 +99,13 @@ export const Dashboard = () => {
           />
           <StatsCard
             title="Clientes"
-            value={new Set(mockEvents.map(e => e.client)).size}
+            value={new Set(mockEvents.map(e => e.client_name)).size}
             icon={Users}
             variant="success"
           />
           <StatsCard
             title="Equipamentos"
-            value={mockEvents.reduce((acc, e) => acc + e.equipmentCount, 0)}
+            value={mockEvents.length}
             icon={Package}
             variant="warning"
           />

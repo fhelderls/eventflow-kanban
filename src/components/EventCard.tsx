@@ -23,20 +23,6 @@ const priorityIndicators = {
   baixa: "border-l-4 border-success",
 };
 
-const statusColors = {
-  planejado: "bg-info text-info-foreground",
-  confirmado: "bg-primary text-primary-foreground",
-  "em-andamento": "bg-warning text-warning-foreground",
-  concluido: "bg-success text-success-foreground",
-  cancelado: "bg-destructive text-destructive-foreground",
-};
-
-const priorityIndicators = {
-  alta: "border-l-4 border-destructive",
-  media: "border-l-4 border-warning",
-  baixa: "border-l-4 border-success",
-};
-
 export const EventCard = ({ event, onClick }: EventCardProps) => {
   return (
     <Card 
