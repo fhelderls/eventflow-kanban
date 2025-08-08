@@ -14,7 +14,242 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      clients: {
+        Row: {
+          address_cep: string | null
+          address_city: string | null
+          address_complement: string | null
+          address_neighborhood: string | null
+          address_number: string | null
+          address_state: string | null
+          address_street: string | null
+          company_name: string | null
+          contact_person: string | null
+          cpf_cnpj: string | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          observations: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          address_cep?: string | null
+          address_city?: string | null
+          address_complement?: string | null
+          address_neighborhood?: string | null
+          address_number?: string | null
+          address_state?: string | null
+          address_street?: string | null
+          company_name?: string | null
+          contact_person?: string | null
+          cpf_cnpj?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          observations?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address_cep?: string | null
+          address_city?: string | null
+          address_complement?: string | null
+          address_neighborhood?: string | null
+          address_number?: string | null
+          address_state?: string | null
+          address_street?: string | null
+          company_name?: string | null
+          contact_person?: string | null
+          cpf_cnpj?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          observations?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      equipment: {
+        Row: {
+          acquisition_date: string | null
+          category: string | null
+          created_at: string
+          description: string | null
+          equipment_code: string
+          id: string
+          name: string
+          observations: string | null
+          status: string
+          updated_at: string
+          value: number | null
+        }
+        Insert: {
+          acquisition_date?: string | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          equipment_code: string
+          id?: string
+          name: string
+          observations?: string | null
+          status?: string
+          updated_at?: string
+          value?: number | null
+        }
+        Update: {
+          acquisition_date?: string | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          equipment_code?: string
+          id?: string
+          name?: string
+          observations?: string | null
+          status?: string
+          updated_at?: string
+          value?: number | null
+        }
+        Relationships: []
+      }
+      event_equipment: {
+        Row: {
+          allocated_date: string | null
+          created_at: string
+          equipment_id: string | null
+          event_id: string | null
+          id: string
+          observations: string | null
+          quantity: number
+          returned_date: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          allocated_date?: string | null
+          created_at?: string
+          equipment_id?: string | null
+          event_id?: string | null
+          id?: string
+          observations?: string | null
+          quantity?: number
+          returned_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          allocated_date?: string | null
+          created_at?: string
+          equipment_id?: string | null
+          event_id?: string | null
+          id?: string
+          observations?: string | null
+          quantity?: number
+          returned_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_equipment_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "equipment"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_equipment_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          barrel_quantity: number | null
+          client_id: string | null
+          created_at: string
+          description: string | null
+          estimated_budget: number | null
+          event_address_cep: string | null
+          event_address_city: string | null
+          event_address_complement: string | null
+          event_address_neighborhood: string | null
+          event_address_number: string | null
+          event_address_state: string | null
+          event_address_street: string | null
+          event_date: string
+          event_time: string | null
+          final_budget: number | null
+          id: string
+          observations: string | null
+          priority: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          barrel_quantity?: number | null
+          client_id?: string | null
+          created_at?: string
+          description?: string | null
+          estimated_budget?: number | null
+          event_address_cep?: string | null
+          event_address_city?: string | null
+          event_address_complement?: string | null
+          event_address_neighborhood?: string | null
+          event_address_number?: string | null
+          event_address_state?: string | null
+          event_address_street?: string | null
+          event_date: string
+          event_time?: string | null
+          final_budget?: number | null
+          id?: string
+          observations?: string | null
+          priority?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          barrel_quantity?: number | null
+          client_id?: string | null
+          created_at?: string
+          description?: string | null
+          estimated_budget?: number | null
+          event_address_cep?: string | null
+          event_address_city?: string | null
+          event_address_complement?: string | null
+          event_address_neighborhood?: string | null
+          event_address_number?: string | null
+          event_address_state?: string | null
+          event_address_street?: string | null
+          event_date?: string
+          event_time?: string | null
+          final_budget?: number | null
+          id?: string
+          observations?: string | null
+          priority?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
