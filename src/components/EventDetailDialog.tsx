@@ -51,18 +51,18 @@ export const EventDetailDialog = ({ event, onClose, onEdit }: EventDetailDialogP
             <div className="grid gap-2 md:grid-cols-3">
               <div>
                 <label className="text-sm text-muted-foreground">Nome</label>
-                <p className="font-medium">{event.client_name}</p>
+                <p className="font-medium">{event.client?.name || "Cliente não informado"}</p>
               </div>
-              {event.client_email && (
+              {event.client?.email && (
                 <div>
                   <label className="text-sm text-muted-foreground">Email</label>
-                  <p className="font-medium">{event.client_email}</p>
+                  <p className="font-medium">{event.client.email}</p>
                 </div>
               )}
-              {event.client_phone && (
+              {event.client?.phone && (
                 <div>
                   <label className="text-sm text-muted-foreground">Telefone</label>
-                  <p className="font-medium">{event.client_phone}</p>
+                  <p className="font-medium">{event.client.phone}</p>
                 </div>
               )}
             </div>
@@ -82,10 +82,10 @@ export const EventDetailDialog = ({ event, onClose, onEdit }: EventDetailDialogP
                 <label className="text-sm text-muted-foreground">Início</label>
                 <p className="font-medium">{event.event_time}</p>
               </div>
-              {event.end_time && (
+              {event.barrel_quantity && (
                 <div>
-                  <label className="text-sm text-muted-foreground">Término</label>
-                  <p className="font-medium">{event.end_time}</p>
+                  <label className="text-sm text-muted-foreground">Barris</label>
+                  <p className="font-medium">{event.barrel_quantity}</p>
                 </div>
               )}
             </div>
@@ -98,13 +98,15 @@ export const EventDetailDialog = ({ event, onClose, onEdit }: EventDetailDialogP
             </h3>
             <div className="grid gap-2 md:grid-cols-2">
               <div>
-                <label className="text-sm text-muted-foreground">Local</label>
-                <p className="font-medium">{event.location}</p>
+                <label className="text-sm text-muted-foreground">Endereço</label>
+                <p className="font-medium">
+                  {[event.event_address_street, event.event_address_number, event.event_address_neighborhood, event.event_address_city, event.event_address_state].filter(Boolean).join(", ") || "Endereço não informado"}
+                </p>
               </div>
-              {event.address && (
+              {event.event_address_cep && (
                 <div>
-                  <label className="text-sm text-muted-foreground">Endereço</label>
-                  <p className="font-medium">{event.address}</p>
+                  <label className="text-sm text-muted-foreground">CEP</label>
+                  <p className="font-medium">{event.event_address_cep}</p>
                 </div>
               )}
             </div>
@@ -122,13 +124,13 @@ export const EventDetailDialog = ({ event, onClose, onEdit }: EventDetailDialogP
             </div>
           )}
 
-          {event.notes && (
+          {event.observations && (
             <div className="space-y-2">
               <h3 className="text-lg font-semibold flex items-center gap-2">
                 <FileText className="w-5 h-5 text-primary" />
                 Observações
               </h3>
-              <p className="text-muted-foreground">{event.notes}</p>
+              <p className="text-muted-foreground">{event.observations}</p>
             </div>
           )}
         </CardContent>

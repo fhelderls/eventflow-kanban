@@ -9,46 +9,62 @@ const mockEvents: Event[] = [
   {
     id: "1",
     title: "Casamento Silva & Santos",
-    client_name: "Maria Silva",
+    client: { id: "1", name: "Maria Silva", email: "maria@email.com", phone: "(11) 99999-1111" },
     event_date: "2024-12-15",
     event_time: "19:00",
-    location: "Salão Príncipe",
-    status: "confirmado",
-    priority: "alta",
-    estimated_budget: 5000
+    event_address_street: "Rua Príncipe",
+    event_address_number: "123",
+    event_address_city: "São Paulo",
+    status: "confirmado" as const,
+    priority: "alta" as const,
+    estimated_budget: 5000,
+    created_at: "2024-12-01T10:00:00Z",
+    updated_at: "2024-12-01T10:00:00Z"
   },
   {
     id: "2", 
     title: "Formatura Medicina UFMG",
-    client_name: "João Oliveira",
+    client: { id: "2", name: "João Oliveira", email: "joao@email.com", phone: "(11) 99999-2222" },
     event_date: "2024-12-20",
     event_time: "20:00",
-    location: "Centro de Convenções",
-    status: "planejado",
-    priority: "media",
-    estimated_budget: 8000
+    event_address_street: "Av. Centro de Convenções",
+    event_address_number: "456",
+    event_address_city: "Belo Horizonte",
+    status: "planejado" as const,
+    priority: "media" as const,
+    estimated_budget: 8000,
+    created_at: "2024-12-01T11:00:00Z",
+    updated_at: "2024-12-01T11:00:00Z"
   },
   {
     id: "3",
     title: "Aniversário 15 Anos",
-    client_name: "Ana Costa",
+    client: { id: "3", name: "Ana Costa", email: "ana@email.com", phone: "(11) 99999-3333" },
     event_date: "2024-12-12", 
     event_time: "18:00",
-    location: "Clube Náutico",
-    status: "em-andamento",
-    priority: "baixa",
-    estimated_budget: 3000
+    event_address_street: "Rua Náutico",
+    event_address_number: "789",
+    event_address_city: "Rio de Janeiro",
+    status: "em-andamento" as const,
+    priority: "baixa" as const,
+    estimated_budget: 3000,
+    created_at: "2024-12-01T12:00:00Z",
+    updated_at: "2024-12-01T12:00:00Z"
   },
   {
     id: "4",
     title: "Evento Corporativo TechStart",
-    client_name: "Carlos Mendes",
+    client: { id: "4", name: "Carlos Mendes", email: "carlos@email.com", phone: "(11) 99999-4444" },
     event_date: "2024-12-10",
     event_time: "14:00", 
-    location: "Hotel Intercity",
-    status: "concluido",
-    priority: "alta",
-    estimated_budget: 7500
+    event_address_street: "Rua Intercity",
+    event_address_number: "321",
+    event_address_city: "São Paulo",
+    status: "concluido" as const,
+    priority: "alta" as const,
+    estimated_budget: 7500,
+    created_at: "2024-12-01T13:00:00Z",
+    updated_at: "2024-12-01T13:00:00Z"
   }
 ];
 
@@ -99,7 +115,7 @@ export const Dashboard = () => {
           />
           <StatsCard
             title="Clientes"
-            value={new Set(mockEvents.map(e => e.client_name)).size}
+            value={new Set(mockEvents.map(e => e.client?.name)).size}
             icon={Users}
             variant="success"
           />

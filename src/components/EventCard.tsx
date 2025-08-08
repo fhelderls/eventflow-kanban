@@ -49,7 +49,7 @@ export const EventCard = ({ event, onClick }: EventCardProps) => {
         {/* Client */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <User className="w-3 h-3" />
-          <span className="truncate">{event.client_name}</span>
+          <span className="truncate">{event.client?.name || "Cliente não informado"}</span>
         </div>
 
         {/* Date & Time */}
@@ -63,7 +63,7 @@ export const EventCard = ({ event, onClick }: EventCardProps) => {
         {/* Location */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <MapPin className="w-3 h-3" />
-          <span className="truncate">{event.location}</span>
+          <span className="truncate">{event.event_address_street ? `${event.event_address_street}, ${event.event_address_number}` : "Local não informado"}</span>
         </div>
 
         {/* Budget */}

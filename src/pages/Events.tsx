@@ -50,7 +50,7 @@ export const Events = () => {
 
   const filteredEvents = events.filter((event) => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         event.client_name.toLowerCase().includes(searchTerm.toLowerCase());
+                         (event.client?.name.toLowerCase() || "").includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || event.status === statusFilter;
     const matchesPriority = priorityFilter === "all" || event.priority === priorityFilter;
     
@@ -209,7 +209,7 @@ export const Events = () => {
                     {/* Client */}
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <User className="w-3 h-3" />
-                      <span className="truncate">{event.client_name}</span>
+                      <span className="truncate">{event.client?.name || "Cliente não informado"}</span>
                     </div>
 
                     {/* Date & Time */}
@@ -223,7 +223,7 @@ export const Events = () => {
                     {/* Location */}
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <MapPin className="w-3 h-3" />
-                      <span className="truncate">{event.location}</span>
+                      <span className="truncate">{event.event_address_street ? `${event.event_address_street}, ${event.event_address_number}` : "Local não informado"}</span>
                     </div>
 
                     {/* Budget */}
