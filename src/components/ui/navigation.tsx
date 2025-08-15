@@ -20,7 +20,7 @@ export const Navigation = ({ className }: NavigationProps) => {
     <nav className={cn("fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50 md:relative md:border-t-0 md:bg-transparent", className)}>
       <div className="flex justify-around items-center py-2 px-4 md:justify-start md:gap-6">
         {navItems.map((item) => {
-          const Icon = item.icon;
+          const IconComponent = item.icon;
           const isActive = location.pathname === item.path;
           
           return (
@@ -35,7 +35,7 @@ export const Navigation = ({ className }: NavigationProps) => {
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
               )}
             >
-              <Icon className="w-5 h-5" />
+              <IconComponent className="w-5 h-5" />
               <span className="text-xs md:text-sm font-medium">{item.label}</span>
             </Link>
           );
