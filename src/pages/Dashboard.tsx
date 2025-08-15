@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { StatsCard } from "@/components/StatsCard";
-import { KanbanColumn } from "@/components/KanbanColumn";
-import { useEvents, Event } from "@/hooks/useEvents";
-import { Calendar, Users, Package, TrendingUp, Plus, Filter } from "lucide-react";
+import { Navigation } from "@/components/ui/navigation";
+import { Calendar, Users, Package, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 const mockEvents: Event[] = [
@@ -88,109 +87,115 @@ export const Dashboard = () => {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Header */}
-      <div className="p-4 border-b border-border bg-gradient-card">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              Event Manager
-            </h1>
-            <p className="text-muted-foreground">Gerencie seus eventos de forma inteligente</p>
+    <div className="h-screen flex flex-col md:flex-row bg-background">
+      {/* Mobile Navigation - Bottom */}
+      <div className="md:hidden order-2">
+        <Navigation />
+      </div>
+      
+      {/* Desktop Navigation - Side */}
+      <div className="hidden md:block w-64 border-r border-border bg-card">
+        <div className="p-4">
+          <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">
+            Event Manager
+          </h1>
+          <Navigation />
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 order-1 md:order-2 pb-16 md:pb-0 overflow-y-auto">
+        {/* Header */}
+        <header className="border-b border-border bg-card/50 backdrop-blur">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold">
+                  Dashboard
+                </h1>
+                <p className="text-muted-foreground text-sm">
+                  Visão geral dos seus eventos
+                </p>
+              </div>
+            </div>
           </div>
-          <Button className="bg-gradient-primary hover:opacity-90 shadow-glow">
-            <Plus className="w-4 h-4 mr-2" />
-            Novo Evento
-          </Button>
-        </div>
+        </header>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatsCard
-            title="Eventos Ativos"
-            value={mockEvents.filter(e => e.status !== "concluido" && e.status !== "cancelado").length}
-            icon={Calendar}
-            variant="primary"
-            trend={{ value: 12, label: "este mês", positive: true }}
-          />
-          <StatsCard
-            title="Clientes"
-            value={new Set(mockEvents.map(e => e.client?.name)).size}
-            icon={Users}
-            variant="success"
-          />
-          <StatsCard
-            title="Equipamentos"
-            value={mockEvents.length}
-            icon={Package}
-            variant="warning"
-          />
-          <StatsCard
-            title="Taxa Sucesso"
-            value="94%"
-            icon={TrendingUp}
-            variant="success"
-            trend={{ value: 5, label: "vs mês anterior", positive: true }}
-          />
-        </div>
-      </div>
+        {/* Main Content */}
+        <main className="container mx-auto px-4 py-8">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+            <StatsCard
+              title="Total de Eventos"
+              value="24"
+              description="Este mês"
+              icon={Calendar}
+              trend={{ value: 12, label: "este mês", positive: true }}
+            />
+            <StatsCard
+              title="Eventos Confirmados"
+              value="18"
+              description="75% do total"
+              icon={Users}
+              trend={{ value: 8, label: "confirmados", positive: true }}
+            />
+            <StatsCard
+              title="Receita Esperada"
+              value="R$ 45.000"
+              description="Este mês"
+              icon={TrendingUp}
+              trend={{ value: 15, label: "crescimento", positive: true }}
+            />
+            <StatsCard
+              title="Equipamentos Ativos"
+              value="42"
+              description="Em uso hoje"
+              icon={Package}
+              trend={{ value: 3, label: "manutenção", positive: false }}
+            />
+          </div>
 
-      {/* Filters */}
-      <div className="p-4 border-b border-border">
-        <div className="flex items-center gap-2 overflow-x-auto">
-          <Filter className="w-4 h-4 text-muted-foreground shrink-0" />
-          {["todos", "alta", "media", "baixa"].map((filter) => (
-            <Badge
-              key={filter}
-              variant={selectedFilter === filter ? "default" : "outline"}
-              className="cursor-pointer capitalize whitespace-nowrap"
-              onClick={() => setSelectedFilter(filter)}
-            >
-              {filter}
-            </Badge>
-          ))}
-        </div>
-      </div>
-
-      {/* Kanban Board */}
-      <div className="flex-1 overflow-x-auto">
-        <div className="flex gap-4 p-4 min-w-max">
-          <KanbanColumn
-            title="Planejado"
-            status="planejado"
-            events={eventsByStatus.planejado}
-            onEventClick={handleEventClick}
-            onAddEvent={handleAddEvent}
-          />
-          <KanbanColumn
-            title="Confirmado"
-            status="confirmado"
-            events={eventsByStatus.confirmado}
-            onEventClick={handleEventClick}
-            onAddEvent={handleAddEvent}
-          />
-          <KanbanColumn
-            title="Em Andamento"
-            status="em-andamento"
-            events={eventsByStatus["em-andamento"]}
-            onEventClick={handleEventClick}
-            onAddEvent={handleAddEvent}
-          />
-          <KanbanColumn
-            title="Concluído"
-            status="concluido"
-            events={eventsByStatus.concluido}
-            onEventClick={handleEventClick}
-            onAddEvent={handleAddEvent}
-          />
-          <KanbanColumn
-            title="Cancelado"
-            status="cancelado"
-            events={eventsByStatus.cancelado}
-            onEventClick={handleEventClick}
-            onAddEvent={handleAddEvent}
-          />
-        </div>
+          {/* Quick Actions */}
+          <div className="bg-gradient-card rounded-lg p-6 mb-8">
+            <h2 className="text-lg font-semibold mb-4">Ações Rápidas</h2>
+            <div className="grid gap-4 md:grid-cols-3">
+              <button className="p-4 bg-primary/10 hover:bg-primary/20 rounded-lg text-left transition-colors group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <span className="text-primary">📅</span>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Novo Evento</h3>
+                    <p className="text-sm text-muted-foreground">Criar evento</p>
+                  </div>
+                </div>
+              </button>
+              
+              <button className="p-4 bg-success/10 hover:bg-success/20 rounded-lg text-left transition-colors group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-success/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <span className="text-success">👥</span>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Novo Cliente</h3>
+                    <p className="text-sm text-muted-foreground">Cadastrar cliente</p>
+                  </div>
+                </div>
+              </button>
+              
+              <button className="p-4 bg-info/10 hover:bg-info/20 rounded-lg text-left transition-colors group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-info/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <span className="text-info">📦</span>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Novo Equipamento</h3>
+                    <p className="text-sm text-muted-foreground">Adicionar item</p>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ClientFormData } from "@/hooks/useClients";
 
+export type { ClientFormData };
+
 interface ClientFormProps {
   initialData?: Partial<ClientFormData>;
   onSubmit: (data: ClientFormData) => void;

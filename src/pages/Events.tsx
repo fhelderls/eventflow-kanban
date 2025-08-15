@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { useEvents, useDeleteEvent, Event } from "@/hooks/useEvents";
+import { useEvents, useCreateEvent, useUpdateEvent, useDeleteEvent, Event } from "@/hooks/useEvents";
 import { EventForm, EventFormData } from "@/components/EventForm";
 import { EventDetailDialog } from "@/components/EventDetailDialog";
+import { Navigation } from "@/components/ui/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +24,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useToast } from "@/hooks/use-toast";
 
 const statusColors = {
   planejado: "bg-info text-info-foreground",
@@ -46,7 +48,10 @@ export const Events = () => {
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
 
   const { data: events = [], isLoading } = useEvents();
+  const createEvent = useCreateEvent();
+  const updateEvent = useUpdateEvent();
   const deleteEvent = useDeleteEvent();
+  const { toast } = useToast();
 
   const filteredEvents = events.filter((event) => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -78,34 +83,106 @@ export const Events = () => {
     }
   };
 
-  const handleFormSubmit = (data: EventFormData) => {
-    // Lógica de criação/edição será implementada
-    console.log("Dados do formulário:", data);
-    setView("list");
+  const handleFormSubmit = async (data: EventFormData) => {
+    try {
+      if (selectedEvent) {
+        await updateEvent.mutateAsync({ id: selectedEvent.id, data });
+        toast({ title: "Evento atualizado com sucesso!" });
+      } else {
+        await createEvent.mutateAsync(data);
+        toast({ title: "Evento criado com sucesso!" });
+      }
+      setView("list");
+    } catch (error) {
+      toast({ 
+        title: "Erro ao salvar evento", 
+        description: "Tente novamente.",
+        variant: "destructive"
+      });
+    }
   };
 
   if (view === "form") {
     return (
-      <EventForm
-        initialData={selectedEvent || undefined}
-        onSubmit={handleFormSubmit}
-        onCancel={() => setView("list")}
-      />
+      <div className="h-screen flex flex-col md:flex-row bg-background">
+        {/* Mobile Navigation - Bottom */}
+        <div className="md:hidden order-2">
+          <Navigation />
+        </div>
+        
+        {/* Desktop Navigation - Side */}
+        <div className="hidden md:block w-64 border-r border-border bg-card">
+          <div className="p-4">
+            <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">
+              Event Manager
+            </h1>
+            <Navigation />
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 order-1 md:order-2 pb-16 md:pb-0 overflow-y-auto">
+          <EventForm
+            initialData={selectedEvent || undefined}
+            onSubmit={handleFormSubmit}
+            onCancel={() => setView("list")}
+            isLoading={createEvent.isPending || updateEvent.isPending}
+          />
+        </div>
+      </div>
     );
   }
 
   if (view === "detail" && selectedEvent) {
     return (
-      <EventDetailDialog
-        event={selectedEvent}
-        onClose={() => setView("list")}
-        onEdit={() => handleEditEvent(selectedEvent)}
-      />
+      <div className="h-screen flex flex-col md:flex-row bg-background">
+        {/* Mobile Navigation - Bottom */}
+        <div className="md:hidden order-2">
+          <Navigation />
+        </div>
+        
+        {/* Desktop Navigation - Side */}
+        <div className="hidden md:block w-64 border-r border-border bg-card">
+          <div className="p-4">
+            <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">
+              Event Manager
+            </h1>
+            <Navigation />
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 order-1 md:order-2 pb-16 md:pb-0 overflow-y-auto">
+          <EventDetailDialog
+            event={selectedEvent}
+            onClose={() => setView("list")}
+            onEdit={() => handleEditEvent(selectedEvent)}
+          />
+        </div>
+      </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="h-screen flex flex-col md:flex-row bg-background">
+      {/* Mobile Navigation - Bottom */}
+      <div className="md:hidden order-2">
+        <Navigation />
+      </div>
+      
+      {/* Desktop Navigation - Side */}
+      <div className="hidden md:block w-64 border-r border-border bg-card">
+        <div className="p-4">
+          <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">
+            Event Manager
+          </h1>
+          <Navigation />
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 order-1 md:order-2 pb-16 md:pb-0 overflow-hidden">
+        <div className="flex flex-col h-full">
       {/* Header */}
       <div className="p-4 border-b border-border bg-gradient-card">
         <div className="flex items-center justify-between mb-4">
@@ -279,7 +356,9 @@ export const Events = () => {
               </Card>
             ))}
           </div>
-        )}
+          )}
+        </div>
+        </div>
       </div>
     </div>
   );
