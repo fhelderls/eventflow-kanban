@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ClientFormData } from "@/hooks/useClients";
+import { ArrowLeft } from "lucide-react";
 
 export type { ClientFormData };
 
@@ -275,13 +276,24 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading }: Clien
             </div>
 
             {/* Botões de Ação */}
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={onCancel}>
-                Cancelar
+            <div className="flex justify-between gap-2">
+              <Button 
+                type="button" 
+                variant="ghost" 
+                onClick={() => window.location.href = "/"}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Voltar ao Início
               </Button>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Salvando..." : "Salvar Cliente"}
-              </Button>
+              <div className="flex gap-2">
+                <Button type="button" variant="outline" onClick={onCancel}>
+                  Cancelar
+                </Button>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? "Salvando..." : "Salvar Cliente"}
+                </Button>
+              </div>
             </div>
           </form>
         </Form>

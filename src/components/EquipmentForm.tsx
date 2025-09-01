@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EquipmentFormData } from "@/hooks/useEquipment";
+import { ArrowLeft } from "lucide-react";
 
 export type { EquipmentFormData };
 
@@ -50,7 +51,12 @@ export function EquipmentForm({ initialData, onSubmit, onCancel, isLoading }: Eq
   });
 
   const handleSubmit = (data: EquipmentFormData) => {
-    onSubmit(data);
+    // Converte data vazia para null
+    const processedData = {
+      ...data,
+      acquisition_date: data.acquisition_date || null,
+    };
+    onSubmit(processedData);
   };
 
   return (
@@ -233,13 +239,24 @@ export function EquipmentForm({ initialData, onSubmit, onCancel, isLoading }: Eq
             </div>
 
             {/* Botões de Ação */}
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={onCancel}>
-                Cancelar
+            <div className="flex justify-between gap-2">
+              <Button 
+                type="button" 
+                variant="ghost" 
+                onClick={() => window.location.href = "/"}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Voltar ao Início
               </Button>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Salvando..." : "Salvar Equipamento"}
-              </Button>
+              <div className="flex gap-2">
+                <Button type="button" variant="outline" onClick={onCancel}>
+                  Cancelar
+                </Button>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? "Salvando..." : "Salvar Equipamento"}
+                </Button>
+              </div>
             </div>
           </form>
         </Form>

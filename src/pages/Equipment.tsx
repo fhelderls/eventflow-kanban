@@ -12,7 +12,8 @@ import {
   Package, 
   Edit, 
   Trash2,
-  Eye
+  Eye,
+  ArrowLeft
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -96,11 +97,21 @@ export const Equipment = () => {
       {/* Header */}
       <div className="p-4 border-b border-border bg-gradient-card">
         <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-2xl font-bold">Equipamentos</h1>
-            <p className="text-muted-foreground">
-              Gerencie todos os seus equipamentos
-            </p>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              onClick={() => window.location.href = "/"}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Dashboard
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold">Equipamentos</h1>
+              <p className="text-muted-foreground">
+                Gerencie todos os seus equipamentos
+              </p>
+            </div>
           </div>
           <Button 
             onClick={handleCreateEquipment}

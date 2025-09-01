@@ -6,23 +6,25 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Clock, User, MapPin, DollarSign, AlertTriangle, FileText } from "lucide-react";
+import { Calendar, Clock, User, MapPin, DollarSign, AlertTriangle, FileText, ArrowLeft } from "lucide-react";
 
 export interface EventFormData {
   title: string;
   description?: string;
-  client_name: string;
-  client_email?: string;
-  client_phone?: string;
+  client_id?: string;
   event_date: string;
-  event_time: string;
-  end_time?: string;
-  location: string;
-  address?: string;
+  event_time?: string;
+  event_address_street?: string;
+  event_address_number?: string;
+  event_address_complement?: string;
+  event_address_neighborhood?: string;
+  event_address_city?: string;
+  event_address_state?: string;
+  event_address_cep?: string;
   status: "planejado" | "confirmado" | "em-andamento" | "concluido" | "cancelado";
   priority: "alta" | "media" | "baixa";
   estimated_budget?: number;
-  notes?: string;
+  observations?: string;
 }
 
 interface EventFormProps {
@@ -100,40 +102,16 @@ export const EventForm = ({ initialData, onSubmit, onCancel, isLoading }: EventF
             <div className="space-y-4">
               <h3 className="text-lg font-semibold flex items-center gap-2">
                 <User className="w-5 h-5 text-primary" />
-                Dados do Cliente
+                Cliente
               </h3>
               
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="space-y-2">
-                  <Label htmlFor="client_name">Nome do Cliente *</Label>
-                  <Input
-                    id="client_name"
-                    {...register("client_name", { required: "Nome do cliente é obrigatório" })}
-                    placeholder="Ex: Maria Silva"
-                  />
-                  {errors.client_name && (
-                    <p className="text-sm text-destructive">{errors.client_name.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="client_email">E-mail</Label>
-                  <Input
-                    id="client_email"
-                    type="email"
-                    {...register("client_email")}
-                    placeholder="maria@email.com"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="client_phone">Telefone</Label>
-                  <Input
-                    id="client_phone"
-                    {...register("client_phone")}
-                    placeholder="(11) 99999-9999"
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="client_id">ID do Cliente</Label>
+                <Input
+                  id="client_id"
+                  {...register("client_id")}
+                  placeholder="Selecione ou digite o ID do cliente"
+                />
               </div>
             </div>
 
@@ -158,23 +136,11 @@ export const EventForm = ({ initialData, onSubmit, onCancel, isLoading }: EventF
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="event_time">Horário de Início *</Label>
+                  <Label htmlFor="event_time">Horário do Evento</Label>
                   <Input
                     id="event_time"
                     type="time"
-                    {...register("event_time", { required: "Horário é obrigatório" })}
-                  />
-                  {errors.event_time && (
-                    <p className="text-sm text-destructive">{errors.event_time.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="end_time">Horário de Término</Label>
-                  <Input
-                    id="end_time"
-                    type="time"
-                    {...register("end_time")}
+                    {...register("event_time")}
                   />
                 </div>
               </div>
@@ -189,23 +155,65 @@ export const EventForm = ({ initialData, onSubmit, onCancel, isLoading }: EventF
               
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="location">Nome do Local *</Label>
+                  <Label htmlFor="event_address_street">Rua</Label>
                   <Input
-                    id="location"
-                    {...register("location", { required: "Local é obrigatório" })}
-                    placeholder="Ex: Salão de Festas Príncipe"
+                    id="event_address_street"
+                    {...register("event_address_street")}
+                    placeholder="Nome da rua"
                   />
-                  {errors.location && (
-                    <p className="text-sm text-destructive">{errors.location.message}</p>
-                  )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="address">Endereço Completo</Label>
+                  <Label htmlFor="event_address_number">Número</Label>
                   <Input
-                    id="address"
-                    {...register("address")}
-                    placeholder="Rua, número, bairro, cidade"
+                    id="event_address_number"
+                    {...register("event_address_number")}
+                    placeholder="Número"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="event_address_complement">Complemento</Label>
+                  <Input
+                    id="event_address_complement"
+                    {...register("event_address_complement")}
+                    placeholder="Apartamento, bloco, etc."
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="event_address_neighborhood">Bairro</Label>
+                  <Input
+                    id="event_address_neighborhood"
+                    {...register("event_address_neighborhood")}
+                    placeholder="Bairro"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="event_address_city">Cidade</Label>
+                  <Input
+                    id="event_address_city"
+                    {...register("event_address_city")}
+                    placeholder="Cidade"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="event_address_state">Estado</Label>
+                  <Input
+                    id="event_address_state"
+                    {...register("event_address_state")}
+                    placeholder="Estado"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="event_address_cep">CEP</Label>
+                  <Input
+                    id="event_address_cep"
+                    {...register("event_address_cep")}
+                    placeholder="00000-000"
                   />
                 </div>
               </div>
@@ -254,10 +262,10 @@ export const EventForm = ({ initialData, onSubmit, onCancel, isLoading }: EventF
               </h3>
               
               <div className="space-y-2">
-                <Label htmlFor="notes">Notas Adicionais</Label>
+                <Label htmlFor="observations">Observações</Label>
                 <Textarea
-                  id="notes"
-                  {...register("notes")}
+                  id="observations"
+                  {...register("observations")}
                   placeholder="Observações importantes sobre o evento..."
                   rows={4}
                 />
@@ -265,22 +273,33 @@ export const EventForm = ({ initialData, onSubmit, onCancel, isLoading }: EventF
             </div>
 
             {/* Botões */}
-            <div className="flex justify-end gap-4 pt-6 border-t">
+            <div className="flex justify-between gap-4 pt-6 border-t">
               <Button
                 type="button"
-                variant="outline"
-                onClick={onCancel}
-                disabled={isLoading}
+                variant="ghost"
+                onClick={() => window.location.href = "/"}
+                className="flex items-center gap-2"
               >
-                Cancelar
+                <ArrowLeft className="w-4 h-4" />
+                Voltar ao Início
               </Button>
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="bg-gradient-primary hover:opacity-90"
-              >
-                {isLoading ? "Salvando..." : "Salvar Evento"}
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={onCancel}
+                  disabled={isLoading}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="bg-gradient-primary hover:opacity-90"
+                >
+                  {isLoading ? "Salvando..." : "Salvar Evento"}
+                </Button>
+              </div>
             </div>
           </form>
         </CardContent>
