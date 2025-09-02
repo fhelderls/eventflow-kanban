@@ -1,16 +1,18 @@
 import { ReactNode } from "react";
 import { Navigation } from "@/components/ui/navigation";
-
 interface AppLayoutProps {
   children: ReactNode;
   title: string;
   description?: string;
   headerAction?: ReactNode;
 }
-
-export const AppLayout = ({ children, title, description, headerAction }: AppLayoutProps) => {
-  return (
-    <div className="h-screen flex flex-col md:flex-row bg-background">
+export const AppLayout = ({
+  children,
+  title,
+  description,
+  headerAction
+}: AppLayoutProps) => {
+  return <div className="h-screen flex flex-col md:flex-row bg-background">
       {/* Mobile Navigation - Bottom */}
       <div className="md:hidden order-2">
         <Navigation />
@@ -20,9 +22,7 @@ export const AppLayout = ({ children, title, description, headerAction }: AppLay
       <div className="hidden md:block w-72 border-r border-border/50 bg-gradient-to-b from-card to-card/80 shadow-xl">
         <div className="p-6 h-full flex flex-col">
           <div className="mb-8 animate-fade-in">
-            <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2 tracking-tight">
-              Event Manager
-            </h1>
+            <h1 className="bg-gradient-primary bg-clip-text mb-2 tracking-tight text-emerald-950 text-5xl font-medium">Du Porto</h1>
             <p className="text-xs text-muted-foreground/80 font-medium">
               Sistema de Gestão de Eventos
             </p>
@@ -43,17 +43,13 @@ export const AppLayout = ({ children, title, description, headerAction }: AppLay
                 <h1 className="text-2xl font-bold text-foreground">
                   {title}
                 </h1>
-                {description && (
-                  <p className="text-muted-foreground text-sm">
+                {description && <p className="text-muted-foreground text-sm">
                     {description}
-                  </p>
-                )}
+                  </p>}
               </div>
-              {headerAction && (
-                <div className="flex items-center gap-2">
+              {headerAction && <div className="flex items-center gap-2">
                   {headerAction}
-                </div>
-              )}
+                </div>}
             </div>
           </div>
         </header>
@@ -63,6 +59,5 @@ export const AppLayout = ({ children, title, description, headerAction }: AppLay
           {children}
         </main>
       </div>
-    </div>
-  );
+    </div>;
 };
