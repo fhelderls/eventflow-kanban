@@ -28,20 +28,27 @@ export const Navigation = ({ className }: NavigationProps) => {
               key={item.path}
               to={item.path}
               className={cn(
-                "flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 min-w-[60px] md:min-w-0",
-                "md:flex-row md:gap-3 md:px-4 md:py-3 md:rounded-lg md:w-full",
+                "flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 min-w-[60px] md:min-w-0 group",
+                "md:flex-row md:gap-4 md:px-5 md:py-4 md:rounded-xl md:w-full md:mb-2",
                 isActive 
-                  ? "text-primary bg-primary/10 scale-105 md:scale-100 md:bg-primary/15 md:shadow-sm" 
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50 hover:scale-105 md:hover:scale-100 md:hover:bg-muted/80"
+                  ? "text-primary bg-gradient-primary/10 scale-105 md:scale-100 md:bg-gradient-primary/15 md:shadow-lg md:shadow-primary/20 md:border md:border-primary/20" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-gradient-to-r hover:from-muted/50 hover:to-muted/80 hover:scale-105 md:hover:scale-[1.02] md:hover:shadow-md md:hover:shadow-muted/50 md:hover:border md:hover:border-border/50"
               )}
             >
-              <IconComponent className={cn(
-                "transition-all duration-300",
-                isActive ? "w-6 h-6 md:w-5 md:h-5" : "w-5 h-5"
-              )} />
+              <div className={cn(
+                "flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg transition-all duration-300",
+                isActive 
+                  ? "bg-gradient-primary shadow-lg scale-110 md:scale-100" 
+                  : "bg-muted/30 group-hover:bg-muted/60 group-hover:scale-110 md:group-hover:scale-105"
+              )}>
+                <IconComponent className={cn(
+                  "transition-all duration-300",
+                  isActive ? "w-5 h-5 text-white drop-shadow-sm" : "w-5 h-5"
+                )} />
+              </div>
               <span className={cn(
-                "text-xs font-medium transition-all duration-300 md:text-sm",
-                isActive ? "font-semibold" : ""
+                "text-xs font-medium transition-all duration-300 md:text-sm md:flex-1",
+                isActive ? "font-bold" : "group-hover:font-medium"
               )}>{item.label}</span>
             </Link>
           );

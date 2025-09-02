@@ -17,12 +17,19 @@ export const AppLayout = ({ children, title, description, headerAction }: AppLay
       </div>
       
       {/* Desktop Navigation - Side */}
-      <div className="hidden md:block w-64 border-r border-border bg-card">
-        <div className="p-4">
-          <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">
-            Event Manager
-          </h1>
-          <Navigation />
+      <div className="hidden md:block w-72 border-r border-border/50 bg-gradient-to-b from-card to-card/80 shadow-xl">
+        <div className="p-6 h-full flex flex-col">
+          <div className="mb-8 animate-fade-in">
+            <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2 tracking-tight">
+              Event Manager
+            </h1>
+            <p className="text-xs text-muted-foreground/80 font-medium">
+              Sistema de Gestão de Eventos
+            </p>
+          </div>
+          <div className="flex-1">
+            <Navigation />
+          </div>
         </div>
       </div>
 
