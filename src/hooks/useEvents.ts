@@ -93,9 +93,15 @@ export const useCreateEvent = () => {
 
   return useMutation({
     mutationFn: async (eventData: EventFormData) => {
+      // Clean data to ensure empty strings become null for UUIDs
+      const cleanedData = {
+        ...eventData,
+        client_id: eventData.client_id && eventData.client_id.trim() !== "" ? eventData.client_id : null,
+      };
+
       const { data, error } = await supabase
         .from("events")
-        .insert(eventData)
+        .insert(cleanedData)
         .select(`
           *,
           client:clients(id, name, email, phone)

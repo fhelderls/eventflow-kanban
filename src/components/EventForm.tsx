@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Clock, User, MapPin, DollarSign, AlertTriangle, FileText, ArrowLeft } from "lucide-react";
+import { useClients } from "@/hooks/useClients";
 
 export interface EventFormData {
   title: string;
@@ -27,6 +28,25 @@ export interface EventFormData {
   observations?: string;
 }
 
+const ClientSelect = ({ value, onValueChange }: { value: string; onValueChange: (value: string) => void }) => {
+  const { data: clients = [], isLoading } = useClients();
+  
+  return (
+    <Select value={value} onValueChange={onValueChange}>
+      <SelectTrigger>
+        <SelectValue placeholder={isLoading ? "Carregando clientes..." : "Selecione um cliente"} />
+      </SelectTrigger>
+      <SelectContent>
+        {clients.map((client) => (
+          <SelectItem key={client.id} value={client.id}>
+            {client.name} {client.company_name && `(${client.company_name})`}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+};
+
 interface EventFormProps {
   initialData?: Partial<EventFormData>;
   onSubmit: (data: EventFormData) => void;
@@ -46,6 +66,14 @@ export const EventForm = ({ initialData, onSubmit, onCancel, isLoading }: EventF
   const watchedStatus = watch("status");
   const watchedPriority = watch("priority");
 
+  const handleFormSubmit = (data: EventFormData) => {
+    // Validate that client_id is provided
+    if (!data.client_id || data.client_id.trim() === "") {
+      return; // Form validation will show the error
+    }
+    onSubmit(data);
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">
       <Card>
@@ -56,7 +84,12 @@ export const EventForm = ({ initialData, onSubmit, onCancel, isLoading }: EventF
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+            {/* Hidden field for client_id validation */}
+            <input
+              type="hidden"
+              {...register("client_id", { required: "Selecione um cliente" })}
+            />
             {/* Informações Básicas */}
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
@@ -106,15 +139,14 @@ export const EventForm = ({ initialData, onSubmit, onCancel, isLoading }: EventF
               </h3>
               
               <div className="space-y-2">
-                <Label htmlFor="client_id">Cliente</Label>
-                <Input
-                  id="client_id"
-                  {...register("client_id")}
-                  placeholder="ID do cliente (opcional)"
+                <Label htmlFor="client_id">Cliente *</Label>
+                <ClientSelect
+                  value={watch("client_id") || ""}
+                  onValueChange={(value) => setValue("client_id", value)}
                 />
-                <p className="text-xs text-muted-foreground">
-                  Deixe em branco se o cliente ainda não estiver cadastrado
-                </p>
+                {errors.client_id && (
+                  <p className="text-sm text-destructive">{errors.client_id.message}</p>
+                )}
               </div>
             </div>
 

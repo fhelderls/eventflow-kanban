@@ -158,19 +158,48 @@ export const Clients = () => {
               >
                 <CardContent className="p-4">
                   <div className="space-y-3">
-                    {/* Header */}
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <h3 className="font-semibold text-sm line-clamp-1">
-                          {client.name}
-                        </h3>
-                        {client.company_name && (
-                          <p className="text-xs text-muted-foreground line-clamp-1">
-                            {client.company_name}
-                          </p>
-                        )}
-                      </div>
-                    </div>
+                     {/* Header */}
+                     <div className="flex items-start justify-between gap-2">
+                       <div className="flex-1">
+                         <div className="flex items-center gap-2 mb-1">
+                           <h3 className="font-semibold text-sm line-clamp-1">
+                             {client.name}
+                           </h3>
+                         </div>
+                         <div className="text-xs text-muted-foreground mb-1">
+                           <strong>ID:</strong> {client.id.slice(0, 8)}...
+                         </div>
+                         {client.company_name && (
+                           <p className="text-xs text-muted-foreground line-clamp-1">
+                             {client.company_name}
+                           </p>
+                         )}
+                       </div>
+                       <Button
+                         variant="ghost"
+                         size="sm"
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           if (navigator.clipboard) {
+                             navigator.clipboard.writeText(client.id);
+                             toast({ title: "ID copiado!", description: "ID do cliente copiado para área de transferência" });
+                           } else {
+                             // Fallback for browsers without clipboard API
+                             const textArea = document.createElement('textarea');
+                             textArea.value = client.id;
+                             document.body.appendChild(textArea);
+                             textArea.select();
+                             document.execCommand('copy');
+                             document.body.removeChild(textArea);
+                             toast({ title: "ID copiado!", description: "ID do cliente copiado para área de transferência" });
+                           }
+                         }}
+                         className="shrink-0"
+                         title="Copiar ID completo"
+                       >
+                         <User className="w-3 h-3" />
+                       </Button>
+                     </div>
 
                     {/* Contact Info */}
                     {client.email && (
