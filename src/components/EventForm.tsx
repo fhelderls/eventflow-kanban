@@ -106,12 +106,15 @@ export const EventForm = ({ initialData, onSubmit, onCancel, isLoading }: EventF
               </h3>
               
               <div className="space-y-2">
-                <Label htmlFor="client_id">ID do Cliente</Label>
+                <Label htmlFor="client_id">Cliente</Label>
                 <Input
                   id="client_id"
                   {...register("client_id")}
-                  placeholder="Selecione ou digite o ID do cliente"
+                  placeholder="ID do cliente (opcional)"
                 />
+                <p className="text-xs text-muted-foreground">
+                  Deixe em branco se o cliente ainda não estiver cadastrado
+                </p>
               </div>
             </div>
 

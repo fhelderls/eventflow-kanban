@@ -55,20 +55,23 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading }: Clien
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Informações Básicas</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  rules={{ required: "Nome é obrigatório" }}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome *</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Nome completo" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                 <FormField
+                   control={form.control}
+                   name="name"
+                   rules={{ required: "Nome é obrigatório" }}
+                   render={({ field }) => (
+                     <FormItem>
+                       <FormLabel>Nome *</FormLabel>
+                       <FormControl>
+                         <Input placeholder="Nome completo" {...field} />
+                       </FormControl>
+                       <FormMessage />
+                       <p className="text-xs text-muted-foreground">
+                         Um ID único será gerado automaticamente após o cadastro
+                       </p>
+                     </FormItem>
+                   )}
+                 />
                 
                 <FormField
                   control={form.control}

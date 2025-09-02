@@ -72,20 +72,23 @@ export const Dashboard = () => {
 
       {/* Quick Actions */}
       <div className="bg-gradient-card rounded-lg p-6 mb-8 shadow-card">
-        <h2 className="text-lg font-semibold mb-4">Ações Rápidas</h2>
-        <div className="grid gap-4 md:grid-cols-3">
+        <h2 className="text-lg font-semibold mb-6 flex items-center gap-2">
+          <TrendingUp className="w-5 h-5 text-primary" />
+          Ações Rápidas
+        </h2>
+        <div className="grid gap-6 md:grid-cols-3">
           <Button 
             asChild 
             variant="outline" 
-            className="p-4 h-auto bg-primary/5 hover:bg-primary/10 border-primary/20 transition-all group"
+            className="p-6 h-auto bg-gradient-primary/10 hover:bg-gradient-primary/20 border-primary/30 transition-all duration-300 group hover:shadow-lg hover:-translate-y-1"
           >
-            <Link to="/events" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Calendar className="w-5 h-5 text-primary" />
+            <Link to="/events" className="flex flex-col items-center gap-4 text-center">
+              <div className="w-14 h-14 bg-gradient-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <Calendar className="w-7 h-7 text-white" />
               </div>
-              <div className="text-left">
-                <h3 className="font-medium">Novo Evento</h3>
-                <p className="text-sm text-muted-foreground">Criar evento</p>
+              <div>
+                <h3 className="font-semibold text-lg">Novo Evento</h3>
+                <p className="text-sm text-muted-foreground">Criar e gerenciar eventos</p>
               </div>
             </Link>
           </Button>
@@ -93,15 +96,15 @@ export const Dashboard = () => {
           <Button 
             asChild 
             variant="outline" 
-            className="p-4 h-auto bg-success/5 hover:bg-success/10 border-success/20 transition-all group"
+            className="p-6 h-auto bg-success/10 hover:bg-success/20 border-success/30 transition-all duration-300 group hover:shadow-lg hover:-translate-y-1"
           >
-            <Link to="/clients" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Users className="w-5 h-5 text-success" />
+            <Link to="/clients" className="flex flex-col items-center gap-4 text-center">
+              <div className="w-14 h-14 bg-gradient-to-br from-success to-success/80 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <Users className="w-7 h-7 text-white" />
               </div>
-              <div className="text-left">
-                <h3 className="font-medium">Novo Cliente</h3>
-                <p className="text-sm text-muted-foreground">Cadastrar cliente</p>
+              <div>
+                <h3 className="font-semibold text-lg">Novo Cliente</h3>
+                <p className="text-sm text-muted-foreground">Cadastrar e gerenciar clientes</p>
               </div>
             </Link>
           </Button>
@@ -109,15 +112,15 @@ export const Dashboard = () => {
           <Button 
             asChild 
             variant="outline" 
-            className="p-4 h-auto bg-info/5 hover:bg-info/10 border-info/20 transition-all group"
+            className="p-6 h-auto bg-info/10 hover:bg-info/20 border-info/30 transition-all duration-300 group hover:shadow-lg hover:-translate-y-1"
           >
-            <Link to="/equipment" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-info/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Package className="w-5 h-5 text-info" />
+            <Link to="/equipment" className="flex flex-col items-center gap-4 text-center">
+              <div className="w-14 h-14 bg-gradient-to-br from-info to-info/80 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <Package className="w-7 h-7 text-white" />
               </div>
-              <div className="text-left">
-                <h3 className="font-medium">Novo Equipamento</h3>
-                <p className="text-sm text-muted-foreground">Adicionar item</p>
+              <div>
+                <h3 className="font-semibold text-lg">Novo Equipamento</h3>
+                <p className="text-sm text-muted-foreground">Adicionar e controlar itens</p>
               </div>
             </Link>
           </Button>

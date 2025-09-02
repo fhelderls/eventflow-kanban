@@ -69,11 +69,11 @@ export const useCreateClient = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
       toast({
         title: "Cliente criado",
-        description: "Cliente foi criado com sucesso.",
+        description: `Cliente criado com sucesso. ID: ${data.id.slice(0, 8)}...`,
       });
     },
     onError: (error) => {
