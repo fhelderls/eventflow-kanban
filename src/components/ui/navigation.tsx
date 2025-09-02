@@ -18,7 +18,7 @@ export const Navigation = ({ className }: NavigationProps) => {
 
   return (
     <nav className={cn("fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-lg border-t border-border z-50 md:relative md:border-t-0 md:bg-transparent md:backdrop-blur-none", className)}>
-      <div className="flex justify-around items-center py-3 px-4 md:justify-start md:gap-2 md:py-0">
+      <div className="flex justify-around items-center py-4 px-2 md:justify-start md:gap-1 md:py-2 md:px-0 md:flex-col md:space-y-1">
         {navItems.map((item) => {
           const IconComponent = item.icon;
           const isActive = location.pathname === item.path;
@@ -28,8 +28,8 @@ export const Navigation = ({ className }: NavigationProps) => {
               key={item.path}
               to={item.path}
               className={cn(
-                "flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 min-w-[60px] md:min-w-0 group",
-                "md:flex-row md:gap-4 md:px-5 md:py-4 md:rounded-xl md:w-full md:mb-2",
+                "flex flex-col items-center gap-1 p-3 rounded-xl transition-all duration-300 flex-1 max-w-[80px] md:max-w-none md:min-w-0 group",
+                "md:flex-row md:gap-4 md:px-5 md:py-4 md:rounded-xl md:w-full md:mb-2 md:flex-none",
                 isActive 
                   ? "text-primary bg-gradient-primary/10 scale-105 md:scale-100 md:bg-gradient-primary/15 md:shadow-lg md:shadow-primary/20 md:border md:border-primary/20" 
                   : "text-muted-foreground hover:text-foreground hover:bg-gradient-to-r hover:from-muted/50 hover:to-muted/80 hover:scale-105 md:hover:scale-[1.02] md:hover:shadow-md md:hover:shadow-muted/50 md:hover:border md:hover:border-border/50"
@@ -47,7 +47,7 @@ export const Navigation = ({ className }: NavigationProps) => {
                 )} />
               </div>
               <span className={cn(
-                "text-xs font-medium transition-all duration-300 md:text-sm md:flex-1",
+                "text-[10px] font-medium transition-all duration-300 md:text-sm md:flex-1 text-center leading-tight",
                 isActive ? "font-bold" : "group-hover:font-medium"
               )}>{item.label}</span>
             </Link>
