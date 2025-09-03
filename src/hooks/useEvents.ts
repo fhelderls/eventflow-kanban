@@ -71,18 +71,43 @@ export const useEvents = () => {
         .from("events")
         .select(`
           *,
-          client:clients(id, name, email, phone),
-          equipment:event_equipment(
-            id,
-            quantity,
-            status,
-            equipment:equipment_id(id, name, equipment_code)
-          )
+          client:clients(id, name, email, phone)
         `)
         .order("event_date", { ascending: true });
       
       if (error) throw error;
-      return data as Event[];
+      
+      // Fetch equipment for each event separately to avoid complex joins
+      const eventsWithEquipment = await Promise.all(
+        data.map(async (event) => {
+          const { data: equipment } = await supabase
+            .from("event_equipment")
+            .select("id, quantity, status, equipment_id")
+            .eq("event_id", event.id);
+            
+          const equipmentWithDetails = await Promise.all(
+            (equipment || []).map(async (eq) => {
+              const { data: equipmentDetail } = await supabase
+                .from("equipment")
+                .select("id, name, equipment_code")
+                .eq("id", eq.equipment_id)
+                .single();
+              
+              return {
+                ...eq,
+                equipment: equipmentDetail || { id: eq.equipment_id, name: "N/A", equipment_code: "N/A" }
+              };
+            })
+          );
+          
+          return {
+            ...event,
+            equipment: equipmentWithDetails
+          };
+        })
+      );
+      
+      return eventsWithEquipment as Event[];
     }
   });
 };
