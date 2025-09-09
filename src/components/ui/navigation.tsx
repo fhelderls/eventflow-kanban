@@ -1,6 +1,9 @@
-import { Calendar, Home, Settings, Package, Users } from "lucide-react";
+import { Calendar, Home, Settings, Package, Users, LogOut, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { useCurrentUserRole } from "@/hooks/useUserRoles";
+import { Button } from "@/components/ui/button";
 
 interface NavigationProps {
   className?: string;
@@ -8,12 +11,15 @@ interface NavigationProps {
 
 export const Navigation = ({ className }: NavigationProps) => {
   const location = useLocation();
+  const { signOut, user } = useAuth();
+  const { data: userRole } = useCurrentUserRole();
   
   const navItems = [
     { path: "/dashboard", label: "Dashboard", icon: Home },
     { path: "/events", label: "Eventos", icon: Calendar },
     { path: "/equipment", label: "Equipamentos", icon: Package },
     { path: "/clients", label: "Clientes", icon: Users },
+    ...(userRole === 'admin' ? [{ path: "/admin", label: "Admin", icon: Shield }] : []),
   ];
 
   return (
@@ -53,6 +59,27 @@ export const Navigation = ({ className }: NavigationProps) => {
             </Link>
           );
         })}
+        
+        {/* User Info and Logout - Desktop Only */}
+        <div className="hidden md:block mt-auto pt-4 border-t border-border/50">
+          {user && (
+            <div className="space-y-2">
+              <div className="px-5 py-2">
+                <p className="text-xs text-muted-foreground">Usuário logado:</p>
+                <p className="text-sm font-medium truncate">{user.email}</p>
+                <p className="text-xs text-muted-foreground capitalize">{userRole}</p>
+              </div>
+              <Button
+                variant="ghost"
+                onClick={signOut}
+                className="w-full justify-start px-5 py-4 h-auto text-muted-foreground hover:text-foreground"
+              >
+                <LogOut className="w-4 h-4 mr-4" />
+                Sair
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   );

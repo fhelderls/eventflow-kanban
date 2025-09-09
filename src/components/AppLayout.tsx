@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { Navigation } from "@/components/ui/navigation";
+import { HeaderLogo } from "@/components/HeaderLogo";
 interface AppLayoutProps {
   children: ReactNode;
   title: string;
@@ -22,8 +23,8 @@ export const AppLayout = ({
       <div className="hidden md:block w-72 border-r border-border/50 bg-gradient-to-b from-card to-card/80 shadow-xl">
         <div className="p-6 h-full flex flex-col">
           <div className="mb-8 animate-fade-in">
-            <h1 className="bg-gradient-primary bg-clip-text mb-2 tracking-tight text-emerald-950 text-5xl font-medium">Du Porto</h1>
-            <p className="text-xs text-muted-foreground/80 font-medium">
+            <HeaderLogo />
+            <p className="text-xs text-muted-foreground/80 font-medium mt-2">
               Sistema de Gestão de Eventos
             </p>
           </div>
