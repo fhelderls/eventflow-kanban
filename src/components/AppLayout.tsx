@@ -13,7 +13,8 @@ export const AppLayout = ({
   description,
   headerAction
 }: AppLayoutProps) => {
-  return <div className="h-screen flex flex-col md:flex-row bg-background">
+  return (
+    <div className="min-h-screen flex flex-col md:flex-row bg-background">
       {/* Mobile Navigation - Bottom */}
       <div className="md:hidden order-2">
         <Navigation />
@@ -44,13 +45,17 @@ export const AppLayout = ({
                 <h1 className="text-2xl font-bold text-foreground">
                   {title}
                 </h1>
-                {description && <p className="text-muted-foreground text-sm">
+                {description && (
+                  <p className="text-muted-foreground text-sm">
                     {description}
-                  </p>}
+                  </p>
+                )}
               </div>
-              {headerAction && <div className="flex items-center gap-2">
+              {headerAction && (
+                <div className="flex items-center gap-2">
                   {headerAction}
-                </div>}
+                </div>
+              )}
             </div>
           </div>
         </header>
@@ -60,5 +65,6 @@ export const AppLayout = ({
           {children}
         </main>
       </div>
-    </div>;
+    </div>
+  );
 };
