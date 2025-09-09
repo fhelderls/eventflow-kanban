@@ -41,7 +41,7 @@ export const Admin = () => {
       {/* Desktop Navigation - Side */}
       <div className="hidden md:block w-64 border-r border-border bg-card">
         <div className="p-4">
-          <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">
+          <h1 className="text-xl font-bold text-primary mb-6">
             Event Manager
           </h1>
           <Navigation />

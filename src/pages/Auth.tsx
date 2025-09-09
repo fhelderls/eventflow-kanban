@@ -70,7 +70,7 @@ export const Auth = () => {
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold text-primary">
             Event Manager
           </h1>
           <p className="text-muted-foreground">
@@ -78,7 +78,7 @@ export const Auth = () => {
           </p>
         </div>
 
-        <Card className="bg-gradient-card shadow-elevated">
+        <Card className="bg-card border-border shadow-lg">
           <CardContent className="p-0">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-2">
@@ -142,7 +142,7 @@ export const Auth = () => {
 
                   <Button 
                     type="submit" 
-                    className="w-full bg-gradient-primary hover:opacity-90"
+                     className="w-full bg-primary hover:bg-primary/90"
                     disabled={loginForm.formState.isSubmitting}
                   >
                     {loginForm.formState.isSubmitting ? "Entrando..." : "Entrar"}
@@ -245,7 +245,7 @@ export const Auth = () => {
 
                   <Button 
                     type="submit" 
-                    className="w-full bg-gradient-primary hover:opacity-90"
+                    className="w-full bg-primary hover:bg-primary/90"
                     disabled={registerForm.formState.isSubmitting}
                   >
                     {registerForm.formState.isSubmitting ? "Criando conta..." : "Criar conta"}

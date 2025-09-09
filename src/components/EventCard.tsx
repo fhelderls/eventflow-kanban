@@ -28,7 +28,7 @@ export const EventCard = ({ event, onClick }: EventCardProps) => {
     <Card 
       className={cn(
         "p-4 cursor-pointer transition-all duration-200 hover:shadow-elevated hover:-translate-y-1",
-        "bg-gradient-card animate-fade-in",
+        "bg-card animate-fade-in",
         priorityIndicators[event.priority]
       )}
       onClick={() => onClick?.(event)}

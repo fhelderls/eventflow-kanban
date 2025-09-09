@@ -7,7 +7,7 @@ export const HeaderLogo = () => {
   
   if (!logoConfig.enabled || !logoConfig.url) {
     return (
-      <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+      <h1 className="text-xl font-bold text-primary">
         Event Manager
       </h1>
     );
@@ -25,7 +25,7 @@ export const HeaderLogo = () => {
           target.style.display = 'none';
         }}
       />
-      <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+      <h1 className="text-xl font-bold text-primary">
         Event Manager
       </h1>
     </div>

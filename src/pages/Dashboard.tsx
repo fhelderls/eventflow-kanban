@@ -71,7 +71,7 @@ export const Dashboard = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-gradient-card rounded-lg p-6 mb-8 shadow-card">
+      <div className="bg-card rounded-lg p-6 mb-8 border border-border/50">
         <h2 className="text-lg font-semibold mb-6 flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-primary" />
           Ações Rápidas
@@ -80,10 +80,10 @@ export const Dashboard = () => {
           <Button 
             asChild 
             variant="outline" 
-            className="p-6 h-auto bg-gradient-primary/10 hover:bg-gradient-primary/20 border-primary/30 transition-all duration-300 group hover:shadow-lg hover:-translate-y-1"
+            className="p-6 h-auto bg-primary/5 hover:bg-primary/10 border-primary/20 transition-all duration-300 group hover:shadow-lg hover:-translate-y-1"
           >
             <Link to="/events" className="flex flex-col items-center gap-4 text-center">
-              <div className="w-14 h-14 bg-gradient-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <Calendar className="w-7 h-7 text-white" />
               </div>
               <div>
@@ -99,7 +99,7 @@ export const Dashboard = () => {
             className="p-6 h-auto bg-success/10 hover:bg-success/20 border-success/30 transition-all duration-300 group hover:shadow-lg hover:-translate-y-1"
           >
             <Link to="/clients" className="flex flex-col items-center gap-4 text-center">
-              <div className="w-14 h-14 bg-gradient-to-br from-success to-success/80 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div className="w-14 h-14 bg-success rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <Users className="w-7 h-7 text-white" />
               </div>
               <div>
@@ -115,7 +115,7 @@ export const Dashboard = () => {
             className="p-6 h-auto bg-info/10 hover:bg-info/20 border-info/30 transition-all duration-300 group hover:shadow-lg hover:-translate-y-1"
           >
             <Link to="/equipment" className="flex flex-col items-center gap-4 text-center">
-              <div className="w-14 h-14 bg-gradient-to-br from-info to-info/80 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div className="w-14 h-14 bg-info rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <Package className="w-7 h-7 text-white" />
               </div>
               <div>
@@ -128,7 +128,7 @@ export const Dashboard = () => {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-gradient-card rounded-lg p-6 shadow-card">
+      <div className="bg-card rounded-lg p-6 border border-border/50">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Atividade Recente</h2>
           <Button variant="outline" size="sm" asChild>
