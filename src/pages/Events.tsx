@@ -114,7 +114,7 @@ export const Events = () => {
         {/* Desktop Navigation - Side */}
         <div className="hidden md:block w-64 border-r border-border bg-card">
           <div className="p-4">
-            <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">
+            <h1 className="text-xl font-bold text-primary mb-6">
               Event Manager
             </h1>
             <Navigation />
@@ -145,7 +145,7 @@ export const Events = () => {
         {/* Desktop Navigation - Side */}
         <div className="hidden md:block w-64 border-r border-border bg-card">
           <div className="p-4">
-            <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">
+            <h1 className="text-xl font-bold text-primary mb-6">
               Event Manager
             </h1>
             <Navigation />
@@ -174,9 +174,9 @@ export const Events = () => {
       {/* Desktop Navigation - Side */}
       <div className="hidden md:block w-64 border-r border-border bg-card">
         <div className="p-4">
-          <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">
-            Event Manager
-          </h1>
+            <h1 className="text-xl font-bold text-primary mb-6">
+              Event Manager
+            </h1>
           <Navigation />
         </div>
       </div>
@@ -185,7 +185,7 @@ export const Events = () => {
       <div className="flex-1 order-1 md:order-2 pb-16 md:pb-0 overflow-hidden">
         <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="p-4 border-b border-border bg-gradient-card">
+      <div className="p-4 border-b border-border bg-card">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
             <Button
@@ -205,7 +205,7 @@ export const Events = () => {
           </div>
           <Button 
             onClick={handleCreateEvent}
-            className="bg-gradient-primary hover:opacity-90 shadow-glow"
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
           >
             <Plus className="w-4 h-4 mr-2" />
             Novo Evento
@@ -270,7 +270,7 @@ export const Events = () => {
                 : "Comece criando seu primeiro evento."
               }
             </p>
-            <Button onClick={handleCreateEvent} className="bg-gradient-primary">
+            <Button onClick={handleCreateEvent} className="bg-primary text-primary-foreground hover:bg-primary/90">
               <Plus className="w-4 h-4 mr-2" />
               Criar Primeiro Evento
             </Button>
@@ -280,7 +280,7 @@ export const Events = () => {
             {filteredEvents.map((event) => (
               <Card 
                 key={event.id} 
-                className={`cursor-pointer transition-all duration-200 hover:shadow-elevated hover:-translate-y-1 bg-gradient-card ${priorityColors[event.priority]}`}
+                className={`cursor-pointer transition-all duration-200 hover:shadow-elevated hover:-translate-y-1 bg-card ${priorityColors[event.priority]}`}
               >
                 <CardContent className="p-4">
                   <div className="space-y-3">
