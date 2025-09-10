@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useEventEquipment, useAddEventEquipment, useUpdateEventEquipment, useRemoveEventEquipment, EventEquipmentFormData } from "@/hooks/useEventEquipment";
 import { useAvailableEquipment } from "@/hooks/useEquipment";
+import { useEquipmentConflicts } from "@/hooks/useEquipmentConflicts";
+import { EventCheckList } from "./EventCheckList";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,16 +16,20 @@ import { useForm } from "react-hook-form";
 
 interface EventEquipmentManagerProps {
   eventId: string;
+  event: any;
+  onEventUpdate?: () => void;
 }
 
 const EquipmentForm = ({ 
   onSubmit, 
   initialData, 
-  isLoading 
+  isLoading,
+  eventDate 
 }: { 
   onSubmit: (data: EventEquipmentFormData) => void;
   initialData?: Partial<EventEquipmentFormData>;
   isLoading?: boolean;
+  eventDate: string;
 }) => {
   const { data: equipment = [] } = useAvailableEquipment();
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<EventEquipmentFormData>({
@@ -34,7 +40,14 @@ const EquipmentForm = ({
     }
   });
 
+  const watchedEquipmentId = watch("equipment_id");
   const watchedStatus = watch("status");
+  
+  const { data: conflicts = [] } = useEquipmentConflicts(
+    watchedEquipmentId, 
+    initialData?.equipment_id ? "edit" : undefined, 
+    eventDate
+  );
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -59,6 +72,14 @@ const EquipmentForm = ({
         </Select>
         {errors.equipment_id && (
           <p className="text-sm text-destructive">{errors.equipment_id.message}</p>
+        )}
+        {conflicts.length > 0 && (
+          <div className="text-sm text-warning">
+            <p>⚠️ Este equipamento já está alocado para:</p>
+            {conflicts.map((conflict: any) => (
+              <p key={conflict.id}>• {conflict.events.title}</p>
+            ))}
+          </div>
         )}
       </div>
 
@@ -111,7 +132,7 @@ const EquipmentForm = ({
   );
 };
 
-export const EventEquipmentManager = ({ eventId }: EventEquipmentManagerProps) => {
+export const EventEquipmentManager = ({ eventId, event, onEventUpdate }: EventEquipmentManagerProps) => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingEquipment, setEditingEquipment] = useState<any>(null);
 
@@ -121,7 +142,11 @@ export const EventEquipmentManager = ({ eventId }: EventEquipmentManagerProps) =
   const removeEquipment = useRemoveEventEquipment();
 
   const handleAdd = async (data: EventEquipmentFormData) => {
-    await addEquipment.mutateAsync({ eventId, equipmentData: data });
+    await addEquipment.mutateAsync({ 
+      eventId, 
+      equipmentData: data, 
+      eventDate: event.event_date 
+    });
     setIsAddDialogOpen(false);
   };
 
@@ -148,17 +173,27 @@ export const EventEquipmentManager = ({ eventId }: EventEquipmentManagerProps) =
     retornado: "bg-success text-success-foreground",
   };
 
+  const canManageEquipment = event.status === "em-andamento";
+
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Package className="w-5 h-5" />
-            Equipamentos do Evento
-          </CardTitle>
+    <div className="space-y-6">
+      {/* Check List Component */}
+      <EventCheckList event={event} onStatusChange={onEventUpdate || (() => {})} />
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Package className="w-5 h-5" />
+              Equipamentos do Evento
+            </CardTitle>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+              <Button 
+                size="sm" 
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                disabled={!canManageEquipment}
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Adicionar
               </Button>
@@ -170,28 +205,41 @@ export const EventEquipmentManager = ({ eventId }: EventEquipmentManagerProps) =
               <EquipmentForm 
                 onSubmit={handleAdd}
                 isLoading={addEquipment.isPending}
+                eventDate={event.event_date}
               />
             </DialogContent>
           </Dialog>
         </div>
       </CardHeader>
-      <CardContent>
+        <CardContent>
+        {!canManageEquipment && (
+          <div className="mb-4 p-3 bg-warning/10 border border-warning/20 rounded-md">
+            <p className="text-sm text-warning">
+              ⚠️ Equipamentos só podem ser gerenciados após o evento estar "Em Andamento". 
+              Complete o check list acima para alterar o status.
+            </p>
+          </div>
+        )}
         {eventEquipment.length === 0 ? (
           <div className="text-center py-8 space-y-3">
             <AlertTriangle className="w-12 h-12 text-warning mx-auto" />
             <div>
               <h3 className="font-medium text-warning">Nenhum equipamento adicionado</h3>
               <p className="text-sm text-muted-foreground">
-                Este evento deve ter pelo menos um equipamento associado.
+                {canManageEquipment 
+                  ? "Este evento deve ter pelo menos um equipamento associado."
+                  : "Complete o check list para poder adicionar equipamentos."
+                }
               </p>
             </div>
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Adicionar Primeiro Equipamento
-                </Button>
-              </DialogTrigger>
+            {canManageEquipment && (
+              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Adicionar Primeiro Equipamento
+                  </Button>
+                </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Adicionar Equipamento</DialogTitle>
@@ -199,9 +247,11 @@ export const EventEquipmentManager = ({ eventId }: EventEquipmentManagerProps) =
                 <EquipmentForm 
                   onSubmit={handleAdd}
                   isLoading={addEquipment.isPending}
+                  eventDate={event.event_date}
                 />
               </DialogContent>
             </Dialog>
+            )}
           </div>
         ) : (
           <Table>
@@ -236,7 +286,11 @@ export const EventEquipmentManager = ({ eventId }: EventEquipmentManagerProps) =
                         onOpenChange={(open) => setEditingEquipment(open ? item : null)}
                       >
                         <DialogTrigger asChild>
-                          <Button variant="ghost" size="sm">
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            disabled={!canManageEquipment}
+                          >
                             <Edit className="w-4 h-4" />
                           </Button>
                         </DialogTrigger>
@@ -253,6 +307,7 @@ export const EventEquipmentManager = ({ eventId }: EventEquipmentManagerProps) =
                               observations: item.observations || ""
                             }}
                             isLoading={updateEquipment.isPending}
+                            eventDate={event.event_date}
                           />
                         </DialogContent>
                       </Dialog>
@@ -261,6 +316,7 @@ export const EventEquipmentManager = ({ eventId }: EventEquipmentManagerProps) =
                         size="sm"
                         onClick={() => handleRemove(item.id)}
                         className="text-destructive hover:text-destructive"
+                        disabled={!canManageEquipment}
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -273,5 +329,6 @@ export const EventEquipmentManager = ({ eventId }: EventEquipmentManagerProps) =
         )}
       </CardContent>
     </Card>
+    </div>
   );
 };

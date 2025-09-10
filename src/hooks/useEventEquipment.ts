@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useCheckEquipmentAvailability } from "./useEquipmentConflicts";
 
 export interface EventEquipment {
   id: string;
@@ -64,9 +65,25 @@ export const useEventEquipment = (eventId?: string) => {
 export const useAddEventEquipment = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const checkAvailability = useCheckEquipmentAvailability();
 
   return useMutation({
-    mutationFn: async ({ eventId, equipmentData }: { eventId: string; equipmentData: EventEquipmentFormData }) => {
+    mutationFn: async ({ eventId, equipmentData, eventDate }: { 
+      eventId: string; 
+      equipmentData: EventEquipmentFormData;
+      eventDate: string;
+    }) => {
+      // Check if equipment is available for this date
+      const isAvailable = await checkAvailability(
+        equipmentData.equipment_id,
+        eventId,
+        eventDate
+      );
+
+      if (!isAvailable) {
+        throw new Error("Este equipamento já está alocado para outro evento na mesma data.");
+      }
+
       const { data, error } = await supabase
         .from("event_equipment")
         .insert({
@@ -87,10 +104,10 @@ export const useAddEventEquipment = () => {
         description: "Equipamento foi adicionado ao evento com sucesso.",
       });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast({
         title: "Erro ao adicionar equipamento",
-        description: "Não foi possível adicionar o equipamento.",
+        description: error.message || "Não foi possível adicionar o equipamento.",
         variant: "destructive",
       });
       console.error("Error adding event equipment:", error);

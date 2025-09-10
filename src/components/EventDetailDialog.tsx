@@ -139,7 +139,11 @@ export const EventDetailDialog = ({ event, onClose, onEdit }: EventDetailDialogP
       
       {/* Equipment Manager */}
       <div className="mt-6">
-        <EventEquipmentManager eventId={event.id} />
+            <EventEquipmentManager 
+              eventId={event.id} 
+              event={event}
+              onEventUpdate={() => window.location.reload()} 
+            />
       </div>
     </div>
   );
