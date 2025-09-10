@@ -103,7 +103,7 @@ const EquipmentForm = ({
       </div>
 
       <div className="flex justify-end gap-2 pt-4">
-        <Button type="submit" disabled={isLoading} className="bg-gradient-primary">
+        <Button type="submit" disabled={isLoading} className="bg-primary text-primary-foreground hover:bg-primary/90">
           {isLoading ? "Salvando..." : "Salvar"}
         </Button>
       </div>
@@ -158,7 +158,7 @@ export const EventEquipmentManager = ({ eventId }: EventEquipmentManagerProps) =
           </CardTitle>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" className="bg-gradient-primary">
+              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
                 <Plus className="w-4 h-4 mr-2" />
                 Adicionar
               </Button>
@@ -187,7 +187,7 @@ export const EventEquipmentManager = ({ eventId }: EventEquipmentManagerProps) =
             </div>
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-gradient-primary">
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
                   <Plus className="w-4 h-4 mr-2" />
                   Adicionar Primeiro Equipamento
                 </Button>

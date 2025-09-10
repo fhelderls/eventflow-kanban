@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, User, MapPin, DollarSign, FileText, Edit, X } from "lucide-react";
+import { EventEquipmentManager } from "@/components/EventEquipmentManager";
 
 interface EventDetailDialogProps {
   event: Event;
@@ -135,6 +136,11 @@ export const EventDetailDialog = ({ event, onClose, onEdit }: EventDetailDialogP
           )}
         </CardContent>
       </Card>
+      
+      {/* Equipment Manager */}
+      <div className="mt-6">
+        <EventEquipmentManager eventId={event.id} />
+      </div>
     </div>
   );
 };

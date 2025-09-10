@@ -1,6 +1,6 @@
-import { Calendar, Home, Settings, Package, Users, LogOut, Shield } from "lucide-react";
+import { Calendar, Home, Settings, Package, Users, LogOut, Shield, LogIn } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useCurrentUserRole } from "@/hooks/useUserRoles";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ interface NavigationProps {
 
 export const Navigation = ({ className }: NavigationProps) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { signOut, user } = useAuth();
   const { data: userRole } = useCurrentUserRole();
   
@@ -47,9 +48,32 @@ export const Navigation = ({ className }: NavigationProps) => {
           );
         })}
         
+        {/* Auth Buttons - Mobile */}
+        <div className="md:hidden">
+          {user ? (
+            <Button
+              variant="ghost"
+              onClick={signOut}
+              className="flex flex-col items-center gap-1 p-3 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            >
+              <LogOut className="w-5 h-5" />
+              <span className="text-xs font-medium">Sair</span>
+            </Button>
+          ) : (
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/auth')}
+              className="flex flex-col items-center gap-1 p-3 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            >
+              <LogIn className="w-5 h-5" />
+              <span className="text-xs font-medium">Entrar</span>
+            </Button>
+          )}
+        </div>
+        
         {/* User Info and Logout - Desktop Only */}
         <div className="hidden md:block mt-auto pt-4 border-t border-border/50">
-          {user && (
+          {user ? (
             <div className="space-y-2">
               <div className="px-4 py-2">
                 <p className="text-xs text-muted-foreground">Usuário:</p>
@@ -65,6 +89,15 @@ export const Navigation = ({ className }: NavigationProps) => {
                 Sair
               </Button>
             </div>
+          ) : (
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/auth')}
+              className="w-full justify-start px-4 py-2 text-muted-foreground hover:text-foreground"
+            >
+              <LogIn className="w-4 h-4 mr-2" />
+              Entrar
+            </Button>
           )}
         </div>
       </div>
