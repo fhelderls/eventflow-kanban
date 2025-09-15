@@ -67,19 +67,29 @@ export const useEvents = () => {
   return useQuery({
     queryKey: ["events"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // Buscar eventos simples sem join
+      const { data: events, error } = await supabase
         .from("events")
-        .select(`
-          *,
-          client:clients(id, name, email, phone)
-        `)
+        .select("*")
         .order("event_date", { ascending: true });
-      
+       
       if (error) throw error;
       
-      // Fetch equipment for each event separately to avoid complex joins
-      const eventsWithEquipment = await Promise.all(
-        data.map(async (event) => {
+      // Buscar dados do cliente e equipamentos separadamente
+      const eventsWithDetails = await Promise.all(
+        events.map(async (event) => {
+          // Buscar cliente se existe client_id
+          let client = null;
+          if (event.client_id) {
+            const { data: clientData } = await supabase
+              .from("clients")
+              .select("id, name, email, phone")
+              .eq("id", event.client_id)
+              .single();
+            client = clientData;
+          }
+          
+          // Buscar equipamentos do evento
           const { data: equipment } = await supabase
             .from("event_equipment")
             .select("id, quantity, status, equipment_id")
@@ -102,12 +112,13 @@ export const useEvents = () => {
           
           return {
             ...event,
+            client,
             equipment: equipmentWithDetails
           };
         })
       );
       
-      return eventsWithEquipment as Event[];
+      return eventsWithDetails as Event[];
     }
   });
 };
@@ -127,14 +138,23 @@ export const useCreateEvent = () => {
       const { data, error } = await supabase
         .from("events")
         .insert(cleanedData)
-        .select(`
-          *,
-          client:clients(id, name, email, phone)
-        `)
+        .select("*")
         .single();
 
       if (error) throw error;
-      return data as Event;
+      
+      // Buscar cliente se existe
+      let client = null;
+      if (data.client_id) {
+        const { data: clientData } = await supabase
+          .from("clients")
+          .select("id, name, email, phone")
+          .eq("id", data.client_id)
+          .single();
+        client = clientData;
+      }
+      
+      return { ...data, client } as Event;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["events"] });
@@ -164,14 +184,23 @@ export const useUpdateEvent = () => {
         .from("events")
         .update(data)
         .eq("id", id)
-        .select(`
-          *,
-          client:clients(id, name, email, phone)
-        `)
+        .select("*")
         .single();
 
       if (error) throw error;
-      return updatedData as Event;
+      
+      // Buscar cliente se existe
+      let client = null;
+      if (updatedData.client_id) {
+        const { data: clientData } = await supabase
+          .from("clients")
+          .select("id, name, email, phone")
+          .eq("id", updatedData.client_id)
+          .single();
+        client = clientData;
+      }
+      
+      return { ...updatedData, client } as Event;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["events"] });

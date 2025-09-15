@@ -17,15 +17,30 @@ export const useUserProfiles = () => {
   return useQuery({
     queryKey: ["userProfiles"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // Buscar profiles
+      const { data: profiles, error: profilesError } = await supabase
         .from("profiles")
-        .select(`
-          *
-        `)
+        .select("*")
         .order("name", { ascending: true });
 
-      if (error) throw error;
-      return data as UserProfile[];
+      if (profilesError) throw profilesError;
+
+      // Buscar roles para cada profile
+      const profilesWithRoles = await Promise.all(
+        profiles.map(async (profile) => {
+          const { data: roleData } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", profile.id);
+
+          return {
+            ...profile,
+            roles: roleData || []
+          };
+        })
+      );
+
+      return profilesWithRoles as UserProfile[];
     }
   });
 };
@@ -41,7 +56,7 @@ export const useCurrentUserRole = () => {
         .from("user_roles")
         .select("role")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error("Error fetching user role:", error);
