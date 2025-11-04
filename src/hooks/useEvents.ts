@@ -180,27 +180,23 @@ export const useUpdateEvent = () => {
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<EventFormData> }) => {
-      const { data: updatedData, error } = await supabase
+      // Clean data to ensure empty strings become null for UUIDs
+      const cleanedData = {
+        ...data,
+        client_id: data.client_id !== undefined && data.client_id?.trim() === "" ? null : data.client_id,
+      };
+
+      const { error } = await supabase
         .from("events")
-        .update(data)
-        .eq("id", id)
-        .select("*")
-        .single();
+        .update(cleanedData)
+        .eq("id", id);
 
       if (error) throw error;
       
-      // Buscar cliente se existe
-      let client = null;
-      if (updatedData.client_id) {
-        const { data: clientData } = await supabase
-          .from("clients")
-          .select("id, name, email, phone")
-          .eq("id", updatedData.client_id)
-          .single();
-        client = clientData;
-      }
+      // Invalidate queries to refetch the updated data
+      queryClient.invalidateQueries({ queryKey: ["events"] });
       
-      return { ...updatedData, client } as Event;
+      return { id };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["events"] });
