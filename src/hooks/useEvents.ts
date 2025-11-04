@@ -67,7 +67,6 @@ export const useEvents = () => {
   return useQuery({
     queryKey: ["events"],
     queryFn: async () => {
-      // Buscar eventos simples sem join
       const { data: events, error } = await supabase
         .from("events")
         .select("*")
@@ -75,21 +74,18 @@ export const useEvents = () => {
        
       if (error) throw error;
       
-      // Buscar dados do cliente e equipamentos separadamente
       const eventsWithDetails = await Promise.all(
         events.map(async (event) => {
-          // Buscar cliente se existe client_id
           let client = null;
           if (event.client_id) {
             const { data: clientData } = await supabase
               .from("clients")
               .select("id, name, email, phone")
               .eq("id", event.client_id)
-              .single();
+              .maybeSingle();
             client = clientData;
           }
           
-          // Buscar equipamentos do evento
           const { data: equipment } = await supabase
             .from("event_equipment")
             .select("id, quantity, status, equipment_id")
@@ -101,7 +97,7 @@ export const useEvents = () => {
                 .from("equipment")
                 .select("id, name, equipment_code")
                 .eq("id", eq.equipment_id)
-                .single();
+                .maybeSingle();
               
               return {
                 ...eq,
@@ -129,7 +125,6 @@ export const useCreateEvent = () => {
 
   return useMutation({
     mutationFn: async (eventData: EventFormData) => {
-      // Clean data to ensure empty strings become null for UUIDs
       const cleanedData = {
         ...eventData,
         client_id: eventData.client_id && eventData.client_id.trim() !== "" ? eventData.client_id : null,
@@ -140,9 +135,6 @@ export const useCreateEvent = () => {
         .insert(cleanedData);
 
       if (error) throw error;
-      
-      // Invalidate queries to refetch all events
-      queryClient.invalidateQueries({ queryKey: ["events"] });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["events"] });
@@ -168,7 +160,6 @@ export const useUpdateEvent = () => {
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<EventFormData> }) => {
-      // Clean data to ensure empty strings become null for UUIDs
       const cleanedData = {
         ...data,
         client_id: data.client_id !== undefined && data.client_id?.trim() === "" ? null : data.client_id,
@@ -180,11 +171,6 @@ export const useUpdateEvent = () => {
         .eq("id", id);
 
       if (error) throw error;
-      
-      // Invalidate queries to refetch the updated data
-      queryClient.invalidateQueries({ queryKey: ["events"] });
-      
-      return { id };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["events"] });
