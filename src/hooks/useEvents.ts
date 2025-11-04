@@ -160,9 +160,26 @@ export const useUpdateEvent = () => {
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<EventFormData> }) => {
+      // Lista de campos válidos na tabela events
+      const validFields = [
+        'title', 'description', 'client_id', 'event_date', 'event_time',
+        'event_address_street', 'event_address_number', 'event_address_complement',
+        'event_address_neighborhood', 'event_address_city', 'event_address_state', 'event_address_cep',
+        'barrel_quantity', 'estimated_budget', 'final_budget',
+        'status', 'priority', 'observations'
+      ];
+
+      // Filtrar apenas campos válidos e remover campos relacionados
+      const filteredData = Object.keys(data).reduce((acc, key) => {
+        if (validFields.includes(key)) {
+          acc[key] = data[key as keyof EventFormData];
+        }
+        return acc;
+      }, {} as Partial<EventFormData>);
+
       const cleanedData = {
-        ...data,
-        client_id: data.client_id !== undefined && data.client_id?.trim() === "" ? null : data.client_id,
+        ...filteredData,
+        client_id: filteredData.client_id !== undefined && filteredData.client_id?.trim() === "" ? null : filteredData.client_id,
       };
 
       const { error } = await supabase
