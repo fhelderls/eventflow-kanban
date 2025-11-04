@@ -135,26 +135,14 @@ export const useCreateEvent = () => {
         client_id: eventData.client_id && eventData.client_id.trim() !== "" ? eventData.client_id : null,
       };
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("events")
-        .insert(cleanedData)
-        .select("*")
-        .single();
+        .insert(cleanedData);
 
       if (error) throw error;
       
-      // Buscar cliente se existe
-      let client = null;
-      if (data.client_id) {
-        const { data: clientData } = await supabase
-          .from("clients")
-          .select("id, name, email, phone")
-          .eq("id", data.client_id)
-          .single();
-        client = clientData;
-      }
-      
-      return { ...data, client } as Event;
+      // Invalidate queries to refetch all events
+      queryClient.invalidateQueries({ queryKey: ["events"] });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["events"] });
