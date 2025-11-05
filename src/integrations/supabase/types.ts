@@ -184,8 +184,53 @@ export type Database = {
           },
         ]
       }
+      event_tasks: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string
+          description: string
+          event_id: string
+          id: string
+          order_index: number
+          updated_at: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          description: string
+          event_id: string
+          id?: string
+          order_index?: number
+          updated_at?: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          description?: string
+          event_id?: string
+          id?: string
+          order_index?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_tasks_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
+          assigned_user_id: string | null
           barrel_quantity: number | null
           client_id: string | null
           created_at: string
@@ -209,6 +254,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          assigned_user_id?: string | null
           barrel_quantity?: number | null
           client_id?: string | null
           created_at?: string
@@ -232,6 +278,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          assigned_user_id?: string | null
           barrel_quantity?: number | null
           client_id?: string | null
           created_at?: string
@@ -351,6 +398,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      sync_equipment_status: {
+        Args: { p_equipment_id: string }
+        Returns: undefined
       }
     }
     Enums: {
