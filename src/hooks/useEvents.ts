@@ -25,9 +25,15 @@ export interface Event {
   barrel_quantity?: number;
   estimated_budget?: number;
   final_budget?: number;
-  status: "planejado" | "confirmado" | "em-andamento" | "concluido" | "cancelado";
+  status: "planejamento" | "preparacao" | "montagem" | "em-andamento" | "concluido" | "cancelado";
   priority: "baixa" | "media" | "alta";
   observations?: string;
+  assigned_user_id?: string;
+  assigned_user?: {
+    id: string;
+    name: string;
+    avatar_url?: string;
+  };
   created_at: string;
   updated_at: string;
   equipment?: Array<{
@@ -58,9 +64,10 @@ export interface EventFormData {
   barrel_quantity?: number;
   estimated_budget?: number;
   final_budget?: number;
-  status: "planejado" | "confirmado" | "em-andamento" | "concluido" | "cancelado";
+  status: "planejamento" | "preparacao" | "montagem" | "em-andamento" | "concluido" | "cancelado";
   priority: "baixa" | "media" | "alta";
   observations?: string;
+  assigned_user_id?: string;
 }
 
 export const useEvents = () => {
@@ -70,7 +77,7 @@ export const useEvents = () => {
       const { data: events, error } = await supabase
         .from("events")
         .select("*")
-        .order("event_date", { ascending: true });
+        .order("event_date", { ascending: true});
        
       if (error) throw error;
       
@@ -84,6 +91,16 @@ export const useEvents = () => {
               .eq("id", event.client_id)
               .maybeSingle();
             client = clientData;
+          }
+          
+          let assigned_user = null;
+          if (event.assigned_user_id) {
+            const { data: userData } = await supabase
+              .from("profiles")
+              .select("id, name, avatar_url")
+              .eq("id", event.assigned_user_id)
+              .maybeSingle();
+            assigned_user = userData;
           }
           
           const { data: equipment } = await supabase
@@ -109,6 +126,7 @@ export const useEvents = () => {
           return {
             ...event,
             client,
+            assigned_user,
             equipment: equipmentWithDetails
           };
         })
@@ -166,7 +184,7 @@ export const useUpdateEvent = () => {
         'event_address_street', 'event_address_number', 'event_address_complement',
         'event_address_neighborhood', 'event_address_city', 'event_address_state', 'event_address_cep',
         'barrel_quantity', 'estimated_budget', 'final_budget',
-        'status', 'priority', 'observations'
+        'status', 'priority', 'observations', 'assigned_user_id'
       ];
 
       // Filtrar apenas campos válidos e remover campos relacionados

@@ -16,6 +16,7 @@ export interface EventEquipment {
     id: string;
     name: string;
     equipment_code: string;
+    category?: string;
   };
 }
 
@@ -45,7 +46,7 @@ export const useEventEquipment = (eventId?: string) => {
         (data || []).map(async (item) => {
           const { data: equipmentDetail } = await supabase
             .from("equipment")
-            .select("id, name, equipment_code")
+            .select("id, name, equipment_code, category")
             .eq("id", item.equipment_id)
             .single();
           

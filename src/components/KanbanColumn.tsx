@@ -13,25 +13,29 @@ interface KanbanColumnProps {
 }
 
 const statusConfig = {
-  planejado: {
-    color: "bg-info/10 text-info border-info/20",
-    count: "bg-info text-info-foreground"
+  planejamento: {
+    color: "bg-slate-100 dark:bg-slate-800",
+    count: "bg-slate-500"
   },
-  confirmado: {
-    color: "bg-primary/10 text-primary border-primary/20", 
-    count: "bg-primary text-primary-foreground"
+  preparacao: {
+    color: "bg-blue-100 dark:bg-blue-900", 
+    count: "bg-blue-500"
+  },
+  montagem: {
+    color: "bg-yellow-100 dark:bg-yellow-900",
+    count: "bg-yellow-500"
   },
   "em-andamento": {
-    color: "bg-warning/10 text-warning border-warning/20",
-    count: "bg-warning text-warning-foreground"
+    color: "bg-orange-100 dark:bg-orange-900",
+    count: "bg-orange-500"
   },
   concluido: {
-    color: "bg-success/10 text-success border-success/20",
-    count: "bg-success text-success-foreground"
+    color: "bg-green-100 dark:bg-green-900",
+    count: "bg-green-500"
   },
   cancelado: {
-    color: "bg-destructive/10 text-destructive border-destructive/20",
-    count: "bg-destructive text-destructive-foreground"
+    color: "bg-red-100 dark:bg-red-900",
+    count: "bg-red-500"
   }
 };
 

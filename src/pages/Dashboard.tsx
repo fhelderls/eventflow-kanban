@@ -13,7 +13,7 @@ export const Dashboard = () => {
   const { data: equipment, isLoading: equipmentLoading } = useEquipment();
 
   // Calculate stats from real data
-  const confirmedEvents = events?.filter(e => e.status === "confirmado").length || 0;
+  const confirmedEvents = events?.filter(e => ["preparacao", "montagem", "em-andamento"].includes(e.status)).length || 0;
   const totalRevenue = events?.reduce((sum, e) => sum + (e.estimated_budget || 0), 0) || 0;
   const activeEquipment = equipment?.filter(e => e.status === "disponivel").length || 0;
   const maintenanceEquipment = equipment?.filter(e => e.status === "manutencao").length || 0;

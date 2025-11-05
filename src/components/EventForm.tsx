@@ -22,7 +22,7 @@ export interface EventFormData {
   event_address_city?: string;
   event_address_state?: string;
   event_address_cep?: string;
-  status: "planejado" | "confirmado" | "em-andamento" | "concluido" | "cancelado";
+  status: "planejamento" | "preparacao" | "montagem" | "em-andamento" | "concluido" | "cancelado";
   priority: "alta" | "media" | "baixa";
   estimated_budget?: number;
   observations?: string;
@@ -57,7 +57,7 @@ interface EventFormProps {
 export const EventForm = ({ initialData, onSubmit, onCancel, isLoading }: EventFormProps) => {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<EventFormData>({
     defaultValues: {
-      status: "planejado",
+      status: "planejamento",
       priority: "media",
       ...initialData,
     },
@@ -111,8 +111,9 @@ export const EventForm = ({ initialData, onSubmit, onCancel, isLoading }: EventF
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="planejado">Planejado</SelectItem>
-                    <SelectItem value="confirmado">Confirmado</SelectItem>
+                    <SelectItem value="planejamento">Planejamento</SelectItem>
+                    <SelectItem value="preparacao">Preparação</SelectItem>
+                    <SelectItem value="montagem">Montagem</SelectItem>
                     <SelectItem value="em-andamento">Em Andamento</SelectItem>
                     <SelectItem value="concluido">Concluído</SelectItem>
                     <SelectItem value="cancelado">Cancelado</SelectItem>

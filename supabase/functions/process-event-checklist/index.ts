@@ -46,10 +46,10 @@ serve(async (req) => {
       );
     }
 
-    // Only allow status change from 'confirmado' to 'em-andamento'
-    if (event.status !== 'confirmado') {
+    // Only allow status change from 'preparacao' to 'montagem'
+    if (event.status !== 'preparacao') {
       return new Response(
-        JSON.stringify({ error: 'Event must be in confirmed status to start' }),
+        JSON.stringify({ error: 'Event must be in preparacao status to start' }),
         { 
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -57,10 +57,42 @@ serve(async (req) => {
       );
     }
 
-    // Update event status to 'em-andamento'
+    // Verify required equipment
+    const { data: allocatedEquipment } = await supabaseClient
+      .from('event_equipment')
+      .select('equipment:equipment_id(category)')
+      .eq('event_id', event_id)
+      .in('status', ['alocado', 'em-uso']);
+
+    const requiredCategories = ['chopeira', 'cilindro_co2', 'manometro', 'pingadeira', 'extratora'];
+    const allocatedCategories = (allocatedEquipment || []).map((e: any) => e.equipment?.category).filter(Boolean);
+    const missingCategories = requiredCategories.filter(cat => !allocatedCategories.includes(cat));
+
+    if (missingCategories.length > 0) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required equipment', missing: missingCategories }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
+      );
+    }
+
+    // Verify checklist tasks
+    const { data: tasks } = await supabaseClient
+      .from('event_tasks')
+      .select('*')
+      .eq('event_id', event_id);
+
+    const incompleteTasks = (tasks || []).filter((t: any) => !t.completed);
+    if (incompleteTasks.length > 0) {
+      return new Response(
+        JSON.stringify({ error: 'Checklist incomplete', incomplete_tasks: incompleteTasks.length }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
+      );
+    }
+
+    // Update event status to 'montagem'
     const { error: updateError } = await supabaseClient
       .from('events')
-      .update({ status: 'em-andamento' })
+      .update({ status: 'montagem' })
       .eq('id', event_id);
 
     if (updateError) {
