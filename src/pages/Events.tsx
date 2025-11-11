@@ -19,7 +19,7 @@ const statusColumns = [
 ];
 
 export const Events = () => {
-  const [view, setView] = useState<"kanban" | "form" | "detail">("kanban");
+  const [view, setView] = useState<"kanban" | "form" | "detail" | "edit">("kanban");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -65,9 +65,28 @@ export const Events = () => {
     });
   };
 
+  const handleUpdateEvent = (data: EventFormData) => {
+    if (!selectedEvent) return;
+    
+    updateEvent.mutate({
+      id: selectedEvent.id,
+      data
+    }, {
+      onSuccess: () => {
+        setView("kanban");
+        setSelectedEvent(null);
+        refetch();
+      }
+    });
+  };
+
   const handleViewEvent = (event: Event) => {
     setSelectedEvent(event);
     setView("detail");
+  };
+
+  const handleEditEvent = () => {
+    setView("edit");
   };
 
   const handleCloseDetail = () => {
@@ -88,12 +107,25 @@ export const Events = () => {
     );
   }
 
+  if (view === "edit" && selectedEvent) {
+    return (
+      <AppLayout title="Editar Evento" description="Editar informações do evento">
+        <EventForm
+          initialData={selectedEvent}
+          onSubmit={handleUpdateEvent}
+          onCancel={handleCloseDetail}
+          isLoading={updateEvent.isPending}
+        />
+      </AppLayout>
+    );
+  }
+
   if (view === "detail" && selectedEvent) {
     return (
       <EventDetailDialog
         event={selectedEvent}
         onClose={handleCloseDetail}
-        onEdit={() => {}}
+        onEdit={handleEditEvent}
         onEventUpdate={refetch}
       />
     );

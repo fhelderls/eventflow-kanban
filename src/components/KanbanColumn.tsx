@@ -1,8 +1,9 @@
-import { EventCard } from "./EventCard";
+import { DraggableEventCard } from "./DraggableEventCard";
 import { Event } from "@/hooks/useEvents";
 import { Badge } from "@/components/ui/badge";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useDroppable } from "@dnd-kit/core";
 
 interface KanbanColumnProps {
   title: string;
@@ -47,6 +48,9 @@ export const KanbanColumn = ({
   onAddEvent 
 }: KanbanColumnProps) => {
   const config = statusConfig[status];
+  const { setNodeRef, isOver } = useDroppable({
+    id: `column-${status}`,
+  });
   
   return (
     <div className="flex flex-col min-h-0 w-80 shrink-0">
@@ -71,7 +75,8 @@ export const KanbanColumn = ({
 
       {/* Column Content */}
       <div 
-        className={`flex-1 p-4 space-y-3 overflow-y-auto min-h-32 border-2 border-dashed rounded-lg mx-4 mb-4 ${config.color}`}
+        ref={setNodeRef}
+        className={`flex-1 p-4 space-y-3 overflow-y-auto min-h-32 border-2 border-dashed rounded-lg mx-4 mb-4 transition-colors ${config.color} ${isOver ? 'border-primary border-solid' : ''}`}
       >
         {events.length === 0 ? (
           <div className="flex items-center justify-center h-20 text-muted-foreground text-sm">
@@ -79,7 +84,7 @@ export const KanbanColumn = ({
           </div>
         ) : (
           events.map((event) => (
-            <EventCard
+            <DraggableEventCard
               key={event.id}
               event={event}
               onClick={onEventClick}
