@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { DndContext, DragEndEvent, closestCorners, DragOverlay } from '@dnd-kit/core';
+import { useState, useMemo } from "react";
+import { DndContext, DragEndEvent, closestCorners, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { useEvents, useCreateEvent, useUpdateEvent, Event } from "@/hooks/useEvents";
 import { EventForm, EventFormData } from "@/components/EventForm";
 import { EventDetailDialog } from "@/components/EventDetailDialog";
@@ -7,8 +7,11 @@ import { KanbanColumn } from "@/components/KanbanColumn";
 import { DraggableEventCard } from "@/components/DraggableEventCard";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus, Search, Filter } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Card } from "@/components/ui/card";
 
 const statusColumns = [
   { status: 'planejamento' as const, title: 'Planejamento' },
@@ -22,16 +25,46 @@ export const Events = () => {
   const [view, setView] = useState<"kanban" | "form" | "detail" | "edit">("kanban");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState<string>("all");
+  const [showFilters, setShowFilters] = useState(false);
 
-  const { data: events = [], refetch } = useEvents();
+  const { data: events = [], refetch, isLoading } = useEvents();
   const createEvent = useCreateEvent();
   const updateEvent = useUpdateEvent();
   const { toast } = useToast();
 
-  const eventsGroupedByStatus = statusColumns.reduce((acc, col) => {
-    acc[col.status] = events.filter(e => e.status === col.status);
-    return acc;
-  }, {} as Record<string, Event[]>);
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
+
+  // Filtered events
+  const filteredEvents = useMemo(() => {
+    return events.filter(event => {
+      const matchesSearch = searchQuery === "" || 
+        event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        event.client?.name.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesPriority = priorityFilter === "all" || event.priority === priorityFilter;
+      
+      return matchesSearch && matchesPriority;
+    });
+  }, [events, searchQuery, priorityFilter]);
+
+  const eventsGroupedByStatus = useMemo(() => {
+    return statusColumns.reduce((acc, col) => {
+      acc[col.status] = filteredEvents.filter(e => e.status === col.status);
+      return acc;
+    }, {} as Record<string, Event[]>);
+  }, [filteredEvents]);
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -40,19 +73,33 @@ export const Events = () => {
     if (!over) return;
 
     const eventId = active.id as string;
-    const newStatus = over.id.toString().replace('column-', '') as Event["status"];
-    const eventToUpdate = events.find(e => e.id === eventId);
+    const overId = over.id.toString();
+    
+    // Check if dropped on a column
+    if (overId.startsWith('column-')) {
+      const newStatus = overId.replace('column-', '') as Event["status"];
+      const eventToUpdate = filteredEvents.find(e => e.id === eventId);
 
-    if (eventToUpdate && eventToUpdate.status !== newStatus) {
-      updateEvent.mutate({
-        id: eventId,
-        data: { status: newStatus }
-      }, {
-        onSuccess: () => {
-          toast({ title: "Status atualizado com sucesso!" });
-          refetch();
-        }
-      });
+      if (eventToUpdate && eventToUpdate.status !== newStatus) {
+        updateEvent.mutate({
+          id: eventId,
+          data: { status: newStatus }
+        }, {
+          onSuccess: () => {
+            toast({ 
+              title: "Status atualizado", 
+              description: `Evento movido para ${statusColumns.find(c => c.status === newStatus)?.title}` 
+            });
+          },
+          onError: () => {
+            toast({
+              title: "Erro ao atualizar status",
+              description: "Tente novamente",
+              variant: "destructive"
+            });
+          }
+        });
+      }
     }
   };
 
@@ -133,17 +180,68 @@ export const Events = () => {
 
   return (
     <AppLayout title="Eventos" description="Gerencie seus eventos em formato Kanban">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Dashboard de Eventos</h2>
-        <Button onClick={() => setView("form")}>
-          <Plus className="w-4 h-4 mr-2" />
-          Novo Evento
-        </Button>
+      <div className="space-y-4 mb-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold">Dashboard de Eventos</h2>
+          <Button onClick={() => setView("form")}>
+            <Plus className="w-4 h-4 mr-2" />
+            Novo Evento
+          </Button>
+        </div>
+
+        {/* Filters */}
+        <Card className="p-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por evento ou cliente..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            
+            <div className="flex gap-2">
+              <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                <SelectTrigger className="w-[140px]">
+                  <Filter className="w-4 h-4 mr-2" />
+                  <SelectValue placeholder="Prioridade" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas</SelectItem>
+                  <SelectItem value="alta">Alta</SelectItem>
+                  <SelectItem value="media">Média</SelectItem>
+                  <SelectItem value="baixa">Baixa</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              {(searchQuery || priorityFilter !== "all") && (
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setPriorityFilter("all");
+                  }}
+                >
+                  Limpar
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Results count */}
+          <div className="mt-3 text-sm text-muted-foreground">
+            {filteredEvents.length} {filteredEvents.length === 1 ? 'evento encontrado' : 'eventos encontrados'}
+          </div>
+        </Card>
       </div>
 
       <DndContext
+        sensors={sensors}
         collisionDetection={closestCorners}
-        onDragStart={({ active }) => setActiveId(active.id as string)}
+        onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
         <div className="flex gap-4 overflow-x-auto pb-4">
@@ -154,15 +252,18 @@ export const Events = () => {
               status={column.status}
               events={eventsGroupedByStatus[column.status] || []}
               onEventClick={handleViewEvent}
+              isLoading={isLoading}
             />
           ))}
         </div>
 
-        <DragOverlay>
+        <DragOverlay dropAnimation={null}>
           {activeId ? (
-            <DraggableEventCard
-              event={events.find(e => e.id === activeId)!}
-            />
+            <div className="rotate-3 scale-105 opacity-90">
+              <DraggableEventCard
+                event={filteredEvents.find(e => e.id === activeId)!}
+              />
+            </div>
           ) : null}
         </DragOverlay>
       </DndContext>

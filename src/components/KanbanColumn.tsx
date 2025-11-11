@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDroppable } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface KanbanColumnProps {
   title: string;
@@ -11,6 +13,7 @@ interface KanbanColumnProps {
   events: Event[];
   onEventClick?: (event: Event) => void;
   onAddEvent?: (status: Event["status"]) => void;
+  isLoading?: boolean;
 }
 
 const statusConfig = {
@@ -45,17 +48,20 @@ export const KanbanColumn = ({
   status, 
   events, 
   onEventClick, 
-  onAddEvent 
+  onAddEvent,
+  isLoading = false
 }: KanbanColumnProps) => {
   const config = statusConfig[status];
   const { setNodeRef, isOver } = useDroppable({
     id: `column-${status}`,
   });
+
+  const eventIds = events.map(e => e.id);
   
   return (
     <div className="flex flex-col min-h-0 w-80 shrink-0">
       {/* Column Header */}
-      <div className="flex items-center justify-between p-4 border-b border-border">
+      <div className="flex items-center justify-between p-4 border-b border-border bg-background/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="flex items-center gap-3">
           <h2 className="font-semibold text-sm">{title}</h2>
           <Badge className={config.count}>
@@ -63,33 +69,46 @@ export const KanbanColumn = ({
           </Badge>
         </div>
         
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onAddEvent?.(status)}
-          className="h-8 w-8 p-0 hover:bg-primary/10"
-        >
-          <Plus className="w-4 h-4" />
-        </Button>
+        {onAddEvent && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onAddEvent(status)}
+            className="h-8 w-8 p-0 hover:bg-primary/10"
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
+        )}
       </div>
 
       {/* Column Content */}
       <div 
         ref={setNodeRef}
-        className={`flex-1 p-4 space-y-3 overflow-y-auto min-h-32 border-2 border-dashed rounded-lg mx-4 mb-4 transition-colors ${config.color} ${isOver ? 'border-primary border-solid' : ''}`}
+        className={`flex-1 p-4 space-y-3 overflow-y-auto min-h-32 border-2 border-dashed rounded-lg mx-4 mb-4 transition-all duration-200 ${config.color} ${
+          isOver ? 'border-primary border-solid bg-primary/5 scale-[1.02]' : ''
+        }`}
       >
-        {events.length === 0 ? (
-          <div className="flex items-center justify-center h-20 text-muted-foreground text-sm">
-            Nenhum evento
+        {isLoading ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-32 w-full" />
+            ))}
+          </div>
+        ) : events.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-32 text-muted-foreground text-sm gap-2">
+            <div className="text-4xl opacity-20">📋</div>
+            <span>Nenhum evento</span>
           </div>
         ) : (
-          events.map((event) => (
-            <DraggableEventCard
-              key={event.id}
-              event={event}
-              onClick={onEventClick}
-            />
-          ))
+          <SortableContext items={eventIds} strategy={verticalListSortingStrategy}>
+            {events.map((event) => (
+              <DraggableEventCard
+                key={event.id}
+                event={event}
+                onClick={onEventClick}
+              />
+            ))}
+          </SortableContext>
         )}
       </div>
     </div>
