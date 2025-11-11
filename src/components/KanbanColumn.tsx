@@ -59,10 +59,10 @@ export const KanbanColumn = ({
   const eventIds = events.map(e => e.id);
   
   return (
-    <div className="flex flex-col min-h-0 w-80 shrink-0">
-      {/* Column Header */}
-      <div className="flex items-center justify-between p-4 border-b border-border bg-background/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="flex items-center gap-3">
+    <div className="flex flex-col w-full mb-4">
+      {/* Row Header */}
+      <div className="flex items-center justify-between p-3 border-b border-border bg-background/50 backdrop-blur-sm">
+        <div className="flex items-center gap-3 min-w-[180px]">
           <h2 className="font-semibold text-sm">{title}</h2>
           <Badge className={config.count}>
             {events.length}
@@ -81,33 +81,36 @@ export const KanbanColumn = ({
         )}
       </div>
 
-      {/* Column Content */}
+      {/* Row Content - Horizontal Scroll */}
       <div 
         ref={setNodeRef}
-        className={`flex-1 p-4 space-y-3 overflow-y-auto min-h-32 border-2 border-dashed rounded-lg mx-4 mb-4 transition-all duration-200 ${config.color} ${
-          isOver ? 'border-primary border-solid bg-primary/5 scale-[1.02]' : ''
+        className={`flex gap-3 p-4 overflow-x-auto min-h-[200px] border-2 border-dashed rounded-lg transition-all duration-200 ${config.color} ${
+          isOver ? 'border-primary border-solid bg-primary/5' : ''
         }`}
       >
         {isLoading ? (
-          <div className="space-y-3">
+          <div className="flex gap-3">
             {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-32 w-full" />
+              <Skeleton key={i} className="h-40 w-80 shrink-0" />
             ))}
           </div>
         ) : events.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-32 text-muted-foreground text-sm gap-2">
+          <div className="flex flex-col items-center justify-center w-full text-muted-foreground text-sm gap-2">
             <div className="text-4xl opacity-20">📋</div>
             <span>Nenhum evento</span>
           </div>
         ) : (
           <SortableContext items={eventIds} strategy={verticalListSortingStrategy}>
-            {events.map((event) => (
-              <DraggableEventCard
-                key={event.id}
-                event={event}
-                onClick={onEventClick}
-              />
-            ))}
+            <div className="flex gap-3">
+              {events.map((event) => (
+                <div key={event.id} className="w-80 shrink-0">
+                  <DraggableEventCard
+                    event={event}
+                    onClick={onEventClick}
+                  />
+                </div>
+              ))}
+            </div>
           </SortableContext>
         )}
       </div>

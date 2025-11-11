@@ -244,7 +244,7 @@ export const Events = () => {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex gap-4 overflow-x-auto pb-4">
+        <div className="flex flex-col gap-4">
           {statusColumns.map(column => (
             <KanbanColumn
               key={column.status}
@@ -259,7 +259,7 @@ export const Events = () => {
 
         <DragOverlay dropAnimation={null}>
           {activeId ? (
-            <div className="rotate-3 scale-105 opacity-90">
+            <div className="rotate-3 scale-105 opacity-90 w-80">
               <DraggableEventCard
                 event={filteredEvents.find(e => e.id === activeId)!}
               />
