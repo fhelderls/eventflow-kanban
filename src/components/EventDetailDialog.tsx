@@ -1,3 +1,5 @@
+import { useRef } from "react";
+import { useReactToPrint } from "react-to-print";
 import { Event } from "@/hooks/useEvents";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
@@ -5,8 +7,9 @@ import { Button } from "./ui/button";
 import { EventOverviewTab } from "./EventOverviewTab";
 import { EventPlanningTab } from "./EventPlanningTab";
 import { EventTeamTab } from "./EventTeamTab";
+import { EventPrintView } from "./EventPrintView";
 import { AppLayout } from "./AppLayout";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Printer } from "lucide-react";
 
 interface EventDetailDialogProps {
   event: Event;
@@ -16,14 +19,28 @@ interface EventDetailDialogProps {
 }
 
 export const EventDetailDialog = ({ event, onClose, onEdit, onEventUpdate }: EventDetailDialogProps) => {
+  const printRef = useRef<HTMLDivElement>(null);
+  
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: `Evento_${event.title.replace(/\s+/g, '_')}`,
+  });
+
   return (
     <AppLayout title={event.title} description="Detalhes do evento">
-      <div className="mb-4">
+      <div className="mb-4 flex justify-between items-center">
         <Button onClick={onClose} variant="ghost">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Voltar para Eventos
         </Button>
+        <Button onClick={handlePrint} variant="outline">
+          <Printer className="w-4 h-4 mr-2" />
+          Imprimir Detalhes e Checklist
+        </Button>
       </div>
+
+      {/* Componente invisível para impressão */}
+      <EventPrintView ref={printRef} event={event} />
 
       <Card>
         <CardHeader>
