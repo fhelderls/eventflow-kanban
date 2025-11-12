@@ -1,18 +1,71 @@
+import { useState } from "react";
 import { useRequiredEquipment } from "@/hooks/useRequiredEquipment";
-import { useEventEquipment } from "@/hooks/useEventEquipment";
+import { useEventEquipment, useAddEventEquipment } from "@/hooks/useEventEquipment";
+import { useEquipment } from "@/hooks/useEquipment";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { Badge } from "./ui/badge";
 import { Progress } from "./ui/progress";
-import { Package, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
+import { Button } from "./ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Package, CheckCircle2, XCircle, AlertTriangle, Plus } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface RequiredEquipmentPanelProps {
   eventId: string;
+  eventDate: string;
 }
 
-export const RequiredEquipmentPanel = ({ eventId }: RequiredEquipmentPanelProps) => {
+export const RequiredEquipmentPanel = ({ eventId, eventDate }: RequiredEquipmentPanelProps) => {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  
   const { validationResults, allRequirementsMet, missingEquipment } = useRequiredEquipment(eventId);
   const { data: eventEquipment = [] } = useEventEquipment(eventId);
+  const { data: allEquipment = [] } = useEquipment();
+  const addEquipment = useAddEventEquipment();
+  const { toast } = useToast();
+
+  // Filtrar equipamentos disponíveis por categoria
+  const availableEquipmentByCategory = selectedCategory
+    ? allEquipment.filter(eq => 
+        eq.category === selectedCategory && 
+        eq.status === 'disponivel'
+      )
+    : [];
+
+  const handleOpenCategoryDialog = (category: string) => {
+    setSelectedCategory(category);
+    setIsDialogOpen(true);
+  };
+
+  const handleAddEquipment = async (equipmentId: string) => {
+    try {
+      await addEquipment.mutateAsync({
+        eventId,
+        equipmentData: {
+          equipment_id: equipmentId,
+          quantity: 1,
+          status: 'alocado',
+          observations: ''
+        },
+        eventDate
+      });
+      
+      toast({
+        title: "Equipamento adicionado",
+        description: "O equipamento foi adicionado ao evento com sucesso.",
+      });
+      
+      setIsDialogOpen(false);
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível adicionar o equipamento.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const allocatedCount = validationResults.filter(v => v.hasRequired).length;
   const totalCount = validationResults.length;
@@ -66,8 +119,9 @@ export const RequiredEquipmentPanel = ({ eventId }: RequiredEquipmentPanelProps)
                 className={`flex items-center justify-between p-3 rounded-lg border-2 transition-all ${
                   item.hasRequired 
                     ? 'border-success/30 bg-success/5' 
-                    : 'border-destructive/30 bg-destructive/5'
+                    : 'border-destructive/30 bg-destructive/5 hover:border-primary/50 cursor-pointer'
                 }`}
+                onClick={() => !item.hasRequired && handleOpenCategoryDialog(item.category)}
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
@@ -77,6 +131,11 @@ export const RequiredEquipmentPanel = ({ eventId }: RequiredEquipmentPanelProps)
                       <XCircle className="w-5 h-5 text-destructive" />
                     )}
                     <span className="font-medium">{item.label}</span>
+                    {!item.hasRequired && (
+                      <span className="text-xs text-muted-foreground italic">
+                        (clique para adicionar)
+                      </span>
+                    )}
                   </div>
                   {allocatedEquipment.length > 0 && (
                     <div className="ml-7 mt-1">
@@ -91,13 +150,25 @@ export const RequiredEquipmentPanel = ({ eventId }: RequiredEquipmentPanelProps)
                     </div>
                   )}
                 </div>
-                <div className="text-right">
+                <div className="flex items-center gap-2">
                   <Badge 
                     variant={item.hasRequired ? "default" : "destructive"}
                     className={item.hasRequired ? "bg-success text-success-foreground" : ""}
                   >
                     {item.allocated}/{item.required}
                   </Badge>
+                  {!item.hasRequired && (
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenCategoryDialog(item.category);
+                      }}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  )}
                 </div>
               </div>
             );
@@ -136,6 +207,76 @@ export const RequiredEquipmentPanel = ({ eventId }: RequiredEquipmentPanelProps)
           </Alert>
         )}
       </CardContent>
+
+      {/* Dialog para selecionar equipamento disponível */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              Equipamentos Disponíveis - {validationResults.find(v => v.category === selectedCategory)?.label}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+            {availableEquipmentByCategory.length === 0 ? (
+              <div className="text-center py-8">
+                <Package className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                <p className="text-muted-foreground">
+                  Nenhum equipamento disponível desta categoria no momento.
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Todos os equipamentos podem estar em uso ou em manutenção.
+                </p>
+              </div>
+            ) : (
+              availableEquipmentByCategory.map(equipment => (
+                <Card 
+                  key={equipment.id}
+                  className="hover:border-primary/50 transition-colors cursor-pointer"
+                  onClick={() => handleAddEquipment(equipment.id)}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-semibold">{equipment.name}</h4>
+                          <Badge variant="outline" className="bg-success/10 text-success border-success/30">
+                            {equipment.status}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          Código: <span className="font-medium">{equipment.equipment_code}</span>
+                        </p>
+                        {equipment.description && (
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {equipment.description}
+                          </p>
+                        )}
+                        {equipment.observations && (
+                          <p className="text-xs text-muted-foreground mt-1 italic">
+                            Obs: {equipment.observations}
+                          </p>
+                        )}
+                      </div>
+                      <Button
+                        size="sm"
+                        className="ml-4"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddEquipment(equipment.id);
+                        }}
+                      >
+                        <Plus className="w-4 h-4 mr-1" />
+                        Adicionar
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };

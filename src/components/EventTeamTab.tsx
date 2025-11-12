@@ -125,7 +125,7 @@ export const EventTeamTab = ({ event, onEventUpdate }: EventTeamTabProps) => {
       </Card>
 
       {/* Equipamentos Obrigatórios */}
-      <RequiredEquipmentPanel eventId={event.id} />
+      <RequiredEquipmentPanel eventId={event.id} eventDate={event.event_date} />
 
       {/* Checklist de Tarefas */}
       <Card>
